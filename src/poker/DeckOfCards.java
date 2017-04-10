@@ -1,16 +1,24 @@
 //Pauric Ward 14401378
+//Assignment 4
 package poker;
 
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Random;
 
+//This class is a programming representation of a deck of playing cards.
+//It contains 52 PlayingCard objects in an ArrayList data structure.
 public class DeckOfCards {
-	LinkedList<PlayingCard> Deck=new LinkedList<PlayingCard>();
-	int numCards=52;
+	private ArrayList<PlayingCard> Deck=new ArrayList<PlayingCard>();
+	private int numCards=52;
 	
 	public DeckOfCards(){
 		reset();
 	}
 	
+	//If the deck is full then this method clears the deck and
+	//Initialises it with 52 new cards. Finally it shuffles the deck
+	//using the shuffle() method.
 	public void reset(){
 		if(!Deck.isEmpty()){
 			Deck.clear();
@@ -51,32 +59,60 @@ public class DeckOfCards {
 		
 	}
 	
-	private void shuffle(){
-		PlayingCard temp;
-		for(int x=0;x<numCards;x++){
-			int rand1=(int)(Math.random()*numCards);
-			int rand2=(int)(Math.random()*numCards);
-			temp=Deck.get(rand1);
-			Deck.add(rand1, Deck.get(rand2));
-			Deck.add(rand2,temp);
+	//This method gets two random numbers between 0 and the size of the deck and swaps 
+	//The elements at those indexes in the Deck using the Collections.swap method.
+	public void shuffle(){
+		numCards=Deck.size();
+		Random rand=new Random();
+		for(int x=0;x<Math.pow(numCards,2);x++){
+			int rand1=rand.nextInt(numCards);
+			int rand2=rand.nextInt(numCards);
+			Collections.swap(Deck, rand1, rand2);
 		}
 	}
 	
-	public PlayingCard dealNext(){
+	
+	//This method returns null if there are no available cards to deal. If
+	//There are cards to deal then it returns the card from the top of the Deck.
+	public synchronized PlayingCard dealNext(){
 		if(numCards==0){
 			return null;
 		}
 		numCards--;
-		return Deck.removeFirst();
+		return Deck.remove(numCards);
 	}
 	
-	public void returnCard(PlayingCard discarded){
-		Deck.addLast(discarded);
+	//This method takes a PlayingCard and adds it to end of the Deck.
+	public synchronized void returnCard(PlayingCard discarded){
+		Deck.add(discarded);
 	}
 	
+	
+	//The main method here creates an instance of DeckOfCards and deals some of the cards.
+	//1 in every 4 cards dealt is then returned to the deck. Eventually the deck runs out of
+	//Available cards and cannot deal any more. The deck is also printed at the end to show that
+	//The deck only contains returned cards.
 	public static void main(String[] args){
 		DeckOfCards deckOfCards=new DeckOfCards();
-		System.out.println(deckOfCards);
-		System.out.println(deckOfCards.dealNext());
+		int maxPlus1=(deckOfCards.numCards+1);
+		
+		//Printing the deck to the console.
+		System.out.println(deckOfCards.Deck.toString()+"\n");
+		for(int x=0;x<maxPlus1;x++){
+			PlayingCard temp=deckOfCards.dealNext();
+			
+			if(temp==null){
+				System.out.println("\n"+deckOfCards.Deck.toString()+"\nThe Deck only contains returned cards therefore another card cannot be dealt. Deck size is: "+deckOfCards.Deck.size());
+			}
+			else if(x%4==0){
+				deckOfCards.returnCard(temp);
+				System.out.println("Dealt and returned card: "+temp.toString()+" Deck Size is: "+deckOfCards.Deck.size());
+			}
+			else{
+				System.out.println("Dealt card: "+temp.toString()+"	Deck Size is: "+deckOfCards.Deck.size());
+				
+			}
+		}
+		
 	}
 }
