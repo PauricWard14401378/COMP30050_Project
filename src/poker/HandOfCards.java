@@ -49,6 +49,7 @@ public class HandOfCards {
 			Hand.add(deck.dealNext());
 		}
 		sort();
+		getValues();
 	}
 
 	public void getValues(){ //stores the values in private ints/chars for easier usage in below methods
@@ -153,11 +154,24 @@ public class HandOfCards {
 	}
 	
 	public boolean isThreeOfAKind(){
+		boolean threeOfAKind=false;
 		//Checking the three instances where a three of a kind occurs
-		if(((card[0]==card[1])&&(card[1]==card[2]))||((card[1]==card[2])&&(card[2]==card[3]))||((card[2]==card[3])&&(card[3]==card[4]))){
-			return true;
+		if((card[0]==card[1])&&(card[1]==card[2])){
+			this.highNonTrip=3;
+			this.lowNonTrip=4;
+			threeOfAKind=true;
 		}
-		return false;
+		else if((card[1]==card[2])&&(card[2]==card[3])){
+			this.highNonTrip=0;
+			this.lowNonTrip=4;
+			threeOfAKind=true;
+		}
+		else if((card[2]==card[3])&&(card[3]==card[4])){
+			this.highNonTrip=0;
+			this.lowNonTrip=1;
+			threeOfAKind=true;
+		}
+		return threeOfAKind;
 	}
 	
 	public boolean isTwoPair(){
@@ -166,22 +180,52 @@ public class HandOfCards {
 		//Checking the instances where the a two pair can occur
 		if(card2[0]==card2[1]&&card2[2]==card2[3]){
 			twoPair=true;
+			this.nonTwoPair=4;
 		}
 		else if(card2[0]==card2[1]&&card2[3]==card2[4]){
 			twoPair=true;
+			this.nonTwoPair=2;
 		}
 		else if(card2[1]==card2[2]&&card2[3]==card2[4]){
 			twoPair=true;
+			this.nonTwoPair=0;
 		}
 		return twoPair;
 	}
 
 	public boolean isOnePair(){
 		//Checking the instances where a pair of cards occur
-		if((card2[0]==card2[1])||(card2[1]==card2[2])||(card2[2]==card2[3])||(card2[3]==card2[4])){
+		if(card[0]==card[1]){
+			leadPairCard = 0;
+			this.highNonPair=2;
+			this.midNonPair=3;
+			this.lowNonPair=4;
 			return true;
 		}
-		return false;
+		else if(card[1]==card[2]){
+			leadPairCard = 1;
+			this.highNonPair=0;
+			this.midNonPair=3;
+			this.lowNonPair=4;
+			return true;
+		}
+		else if(card[2]==card[3]){
+			leadPairCard = 2;
+			this.highNonPair=0;
+			this.midNonPair=1;
+			this.lowNonPair=4;
+			return true;
+		}
+		else if(card[3]==card[4]){
+			leadPairCard = 3;
+			this.highNonPair=0;
+			this.midNonPair=1;
+			this.lowNonPair=2;
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 	
 	public boolean isHighHand(){
@@ -312,12 +356,6 @@ public class HandOfCards {
 		return gameValue;
 	}
 	
-	/* The getDiscardProbability method takes a card from the hand and assigns a probability to it based on its worth to the hand and
-	 * hand classification. I decided to assign a probability to each card based on what hand classification it belongs to and the 
-	 * probability of removing that card having a positive impact on the hand. I went through each class of hand and decided, using my 
-	 * own poker knowledge and probability, which cards I would keep and which I would remove. If I was assigning a value to a card 
-	 * purely based its gamevalue I used this formula ((14-check[cardPosition])*7.7) which splits the range 0-100 into 14 pieces
-	 * and assigned to the card. */
 	public int getDiscardProbability(int cardPosition){
 		int discardProbability = 0;
 		//checks for invalid input
@@ -377,7 +415,6 @@ public class HandOfCards {
 			else if(this.isBustedStraight()){
 				if(this.bustedStraightCard==cardPosition){
 					discardProbability = 100;
-					return discardProbability;
 				}
 			}
 			else{
@@ -552,11 +589,11 @@ public class HandOfCards {
 		DeckOfCards Deck=new DeckOfCards();
 		HandOfCards Hand=new HandOfCards(Deck);
 		HandOfCards Hand2=new HandOfCards(Deck);
-		SetHand set=new SetHand(Hand,18);
+		SetHand set=new SetHand(Hand,11);
 		SetHand set2=new SetHand(Hand2,12);
 		Hand.getValues();
 		Hand2.getValues();
-		System.out.println(Hand+" "+Hand.isStraight()+" "+Hand.getDiscardProbability(0)+" "+Hand.getDiscardProbability(1)+" "+Hand.getDiscardProbability(2)+" "+Hand.getDiscardProbability(3)+" "+Hand.getDiscardProbability(4)+" ");
+		System.out.println(Hand+" "+Hand.isFourOfAKind()+" "+Hand.getDiscardProbability(0)+" "+Hand.getDiscardProbability(1)+" "+Hand.getDiscardProbability(2)+" "+Hand.getDiscardProbability(3)+" "+Hand.getDiscardProbability(4)+" ");
 		System.out.println(Hand2+" "+Hand2.isStraight()+" "+Hand2.getGamevalue());
 		
 		

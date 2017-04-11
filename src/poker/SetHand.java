@@ -91,11 +91,12 @@ public class SetHand {
 				Hand.add(new PlayingCard("10",'D',10,10));
 				Class="Ace High Straight";
 				break; 
-		case 11:Hand.add(new PlayingCard("K",'D',13,13));
-				Hand.add(new PlayingCard("k",'D',13,13));
-				Hand.add(new PlayingCard("3",'D',3,3));
-				Hand.add(new PlayingCard("3",'D',3,3));
-				Hand.add(new PlayingCard("2",'S',2,2));	
+				
+		case 11:Hand.add(new PlayingCard("A",'D',14,14));
+				Hand.add(new PlayingCard("K",'D',13,13));
+				Hand.add(new PlayingCard("J",'D',11,11));
+				Hand.add(new PlayingCard("8",'C',8,8));
+				Hand.add(new PlayingCard("5",'S',5,5));	
 				Class="Five High Straight";
 				break;
 		case 12:Hand.add(new PlayingCard("Q",'D',12,12));
