@@ -6,6 +6,7 @@ public abstract class PokerPlayer {
 	protected DeckOfCards Deck;
 	public HandOfCards Hand;
 	private int Bank=DEFAULTCHIPCOUNT;
+	private boolean Bankrupt=false;
 	
 	//The PokerPlayer constructor takes as input a deck of cards and deals a hand to the poker player
 	public PokerPlayer(DeckOfCards deck){
@@ -37,10 +38,16 @@ public abstract class PokerPlayer {
 			throw new ArithmeticException("Unable to remove that amount from your bank.");
 		}
 		Bank-=amount;
+		if(Bank<=0){
+			Bankrupt=true;
+		}
 		return amount;
 	}
 	public void addToBank(int amount){
 		Bank+=amount;
+	}
+	public boolean isBankrupt(){
+		return Bankrupt;
 	}
 
 }
