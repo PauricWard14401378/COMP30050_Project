@@ -11,7 +11,7 @@ import java.util.Comparator;
 
 public class HandOfCards {
 	
-	private static final int HANDSIZE=5;
+	public static final int HANDSIZE=5;
 	public static final int ROYALFLUSH=9000000;
 	public static final int STRAIGHTFLUSH=8000000;
 	public static final int FOUROFAKIND=7000000;
