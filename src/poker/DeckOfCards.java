@@ -10,6 +10,7 @@ import java.util.Random;
 //It contains 52 PlayingCard objects in an ArrayList data structure.
 public class DeckOfCards {
 	private ArrayList<PlayingCard> Deck=new ArrayList<PlayingCard>();
+	static private final int DECKSIZE=52; 
 	private int numCards=52;
 	
 	public DeckOfCards(){
@@ -62,11 +63,10 @@ public class DeckOfCards {
 	//This method gets two random numbers between 0 and the size of the deck and swaps 
 	//The elements at those indexes in the Deck using the Collections.swap method.
 	public void shuffle(){
-		numCards=Deck.size();
 		Random rand=new Random();
-		for(int x=0;x<Math.pow(numCards,2);x++){
-			int rand1=rand.nextInt(numCards);
-			int rand2=rand.nextInt(numCards);
+		for(int x=0;x<Math.pow(DECKSIZE,2);x++){
+			int rand1=rand.nextInt(DECKSIZE);
+			int rand2=rand.nextInt(DECKSIZE);
 			Collections.swap(Deck, rand1, rand2);
 		}
 	}

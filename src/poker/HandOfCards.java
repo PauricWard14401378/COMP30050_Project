@@ -24,6 +24,22 @@ public class HandOfCards {
 	
 	public ArrayList<PlayingCard> Hand=new ArrayList<PlayingCard>();
 	private DeckOfCards Deck;
+	private int[] card=new int[HANDSIZE];
+	private int[] card2=new int[HANDSIZE];
+	private char[] card3=new char[HANDSIZE];
+	
+	//ints for keeping track of which cards are which in each hand
+	private int leadPairCard = 5;
+	private int bustedFlushCard = 5;
+	private int bustedStraightCard = 5;
+	private int highNonTrip = 5;
+	private int lowNonTrip = 5;
+	private int nonTwoPair = 5;
+	private int highNonPair = 5;
+	private int midNonPair = 5;
+	private int lowNonPair = 5;
+		
+		
 	
 	//This constructor takes as input a deck of cards which is then referenced throughout the class by 
 	//initialising 'Deck'. 5 cards are dealt from the deck and sorted by their game value.
@@ -35,6 +51,13 @@ public class HandOfCards {
 		sort();
 	}
 
+	public void getValues(){ //stores the values in private ints/chars for easier usage in below methods
+		for(int x=0;x<HANDSIZE;x++){
+			card[x]=Hand.get(x).getGameValue();
+			card2[x]=Hand.get(x).getFaceValue();
+			card3[x]=Hand.get(x).getSuit();
+		}
+	}
 	//This method sorts the hand of cards by the game value of the cards by overriding the comparator.
 	public void sort(){
 		Collections.sort(Hand,new Comparator<PlayingCard>(){
@@ -47,183 +70,115 @@ public class HandOfCards {
 				}
 			}
 		});
+		
 	}
+	
 	
 	/*In each of the boolean methods I filled an array with the attribute that I wanted to compare from each card in the hand.
 	 *I then compared these attributes and returned true or false depending on these comparisons. In this way we can classify 
 	 *the hand depending on the game value.*/
 	
 	public boolean isRoyalFlush(){
-		int[] check=new int[HANDSIZE];
-		char[] check2=new char[HANDSIZE];
 		boolean straight=false,flush=false;
 		
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
-			check2[x]=Hand.get(x).getSuit();
-		}
 		//Checking for the Ace high straight
-		if(check[0]==14&&check[1]==13&&check[2]==12&&check[3]==11&&check[4]==10){
+		if(card[0]==14&&card[1]==13&&card[2]==12&&card[3]==11&&card[4]==10){
 			straight= true;
 		}
 		//Checking for a flush
-		if(check2[0]==check2[1]&&check2[1]==check2[2]&&check2[2]==check2[3]&&check2[3]==check2[4]){
-			flush=true;
-		}
+		flush=this.isFlush();
 		return (straight&&flush);
 	}
 	
 	public boolean isStraightFlush(){
-		int[] check=new int[HANDSIZE];
-		char[] check2 = new char[HANDSIZE];
 		boolean straight=false,flush=false;
-		if(this.isRoyalFlush()){
-			return false;
-		}
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
-			check2[x]=Hand.get(x).getSuit();
-		}
-		//Checking for a straight
-		if(check[0]==(check[1]+1)&&(check[1]==check[2]+1)&&(check[2]==check[3]+1)&&(check[3]==check[4]+1)){
-			straight=true;
-		}
-		//Checking for a straight with an ace
-		else if(check[0]==(check[1]+9)&&(check[1]==check[2]+1)&&(check[2]==check[3]+1)&&(check[3]==check[4]+1)){
-			straight=true;
-		}
+		
+		//checking for a straight
+		straight=this.isStraight();
+		
 		//Checking for the flush
-		if((check2[0]==check2[1])&&(check2[1]==check2[2])&&(check2[2]==check2[3])&&(check2[3]==check2[4])){
-			flush= true;
-		}
+		flush=this.isFlush();
 		return (flush&&straight);
 	}
 	
 	public boolean isFourOfAKind(){
-		int[] check=new int[HANDSIZE];
 		boolean fourOfAKind=false;
-		if(this.isStraightFlush()||this.isRoyalFlush()){
-			return false;
-		}
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
-		}
+
 		//Checking the two cases of four of a kind in a hand
-		if((check[0]==check[1])&&(check[1]==check[2])&&(check[2]==check[3])){
+		if((card[0]==card[1])&&(card[1]==card[2])&&(card[2]==card[3])){
 			fourOfAKind=true;
 		}
-		else if((check[3]==check[4])&&(check[1]==check[2])&&(check[2]==check[3])){
+		else if((card[3]==card[4])&&(card[1]==card[2])&&(card[2]==card[3])){
 			fourOfAKind=true;
 		}
 		return fourOfAKind;
 	}
 	
 	public boolean isFullHouse(){
-		int[] check=new int[HANDSIZE];
 		boolean fullhouse=false;
-		if(this.isStraightFlush()||this.isRoyalFlush()||this.isFourOfAKind()){
-			return false;
-		}
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
-		}
-		
+
 		//Checking the two cases where a full house occurs
-		if(((check[0]==check[1])&&(check[1]==check[2])) && (check[3]==check[4])){
+		if(((card[0]==card[1])&&(card[1]==card[2])) && (card[3]==card[4])){
 			fullhouse= true;
 		}
-		else if(((check[2]==check[3])&&(check[3]==check[4]))&&(check[0]==check[1])){
+		else if(((card[2]==card[3])&&(card[3]==card[4]))&&(card[0]==card[1])){
 			fullhouse= true;
 		}
 		return fullhouse;
 	}
 	
 	
-	
 	public boolean isFlush(){
-		char[] check = new char[HANDSIZE];
-		if(this.isStraightFlush()||this.isRoyalFlush()||this.isFourOfAKind()||this.isFullHouse()){
-			return false;
-		}
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getSuit();
-		}
 		//Checking the flush
-		if((check[0]==check[1])&&(check[1]==check[2])&&(check[2]==check[3])&&(check[3]==check[4])){
+		if((card3[0]==card3[1])&&(card3[1]==card3[2])&&(card3[2]==card3[3])&&(card3[3]==card3[4])){
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean isStraight(){
-		int[] check=new int[HANDSIZE];
 		boolean straight=false;
-		if(this.isStraightFlush()||this.isRoyalFlush()||this.isFourOfAKind()||this.isFullHouse()||this.isFlush()){
-			return false;
-		}
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
-		}
+
 		//Checking the straight
-		if(check[0]==(check[1]+1)&&(check[1]==check[2]+1)&&(check[2]==check[3]+1)&&(check[3]==check[4]+1)){
+		if((card[0]==card[1]+1)&&(card[1]==card[2]+1)&&(card[2]==card[3]+1)&&(card[3]==card[4]+1)){
 			straight=true;
+			
 		}
+		
 		//Checking the straight with an ace
-		else if(check[0]==(check[1]+9)&&(check[1]==check[2]+1)&&(check[2]==check[3]+1)&&(check[3]==check[4]+1)){
+		else if((card[0]==card[1]+9)&&(card[1]==card[2]+1)&&(card[2]==card[3]+1)&&(card[3]==card[4]+1)){
 			straight=true;
 		}
 		return straight;
 	}
 	
 	public boolean isThreeOfAKind(){
-		int[] check=new int[HANDSIZE];
-		if(this.isStraightFlush()||this.isRoyalFlush()||this.isFourOfAKind()||this.isFullHouse()||this.isFlush()||this.isStraight()){
-			return false;
-		}
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
-		}
 		//Checking the three instances where a three of a kind occurs
-		if(((check[0]==check[1])&&(check[1]==check[2]))||((check[1]==check[2])&&(check[2]==check[3]))||((check[2]==check[3])&&(check[3]==check[4]))){
+		if(((card[0]==card[1])&&(card[1]==card[2]))||((card[1]==card[2])&&(card[2]==card[3]))||((card[2]==card[3])&&(card[3]==card[4]))){
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean isTwoPair(){
-		int[] check=new int[HANDSIZE];
 		boolean twoPair=false;
-		if(this.isStraightFlush()||this.isRoyalFlush()||this.isFourOfAKind()||this.isFullHouse()||this.isFlush()||this.isStraight()||this.isThreeOfAKind()){
-			return false;
-		}
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getFaceValue();
-		}
+
 		//Checking the instances where the a two pair can occur
-		if(check[0]==check[1]&&check[2]==check[3]){
+		if(card2[0]==card2[1]&&card2[2]==card2[3]){
 			twoPair=true;
 		}
-		else if(check[0]==check[1]&&check[3]==check[4]){
+		else if(card2[0]==card2[1]&&card2[3]==card2[4]){
 			twoPair=true;
 		}
-		else if(check[1]==check[2]&&check[3]==check[4]){
+		else if(card2[1]==card2[2]&&card2[3]==card2[4]){
 			twoPair=true;
 		}
 		return twoPair;
 	}
 
 	public boolean isOnePair(){
-		int[] check=new int[HANDSIZE];
-		if(this.isStraightFlush()||this.isRoyalFlush()||this.isFourOfAKind()||this.isFullHouse()||this.isFlush()||this.isStraight()||this.isThreeOfAKind()||this.isTwoPair()){
-			return false;
-		}
-		
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getFaceValue();
-		}
-		
 		//Checking the instances where a pair of cards occur
-		if((check[0]==check[1])||(check[1]==check[2])||(check[2]==check[3])||(check[3]==check[4])){
+		if((card2[0]==card2[1])||(card2[1]==card2[2])||(card2[2]==card2[3])||(card2[3]==card2[4])){
 			return true;
 		}
 		return false;
@@ -253,109 +208,105 @@ public class HandOfCards {
 	 */
 	public int getGamevalue(){
 		int gameValue=0;
-		int[] check=new int[HANDSIZE];
+		int[] card=new int[HANDSIZE];
 		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
+			card[x]=Hand.get(x).getGameValue();
 		}
-		if(this.isHighHand()){
-			//Best Card^5+Second Best^4+Third Best^3...etc
+		if(this.isRoyalFlush()){
+			gameValue=ROYALFLUSH;
+		}
+		else if(this.isStraightFlush()){
+			gameValue=STRAIGHTFLUSH;
+			//carding for the 5 high Straight Flush where Ace is low. In this case 5 will be the second card in the hand
+			//Due to our sort() method sorting by gameValue
+			if(card[1]==5){
+				gameValue+=Math.pow(card[4], 5)+Math.pow(card[3], 4)+Math.pow(card[2], 3)+Math.pow(card[1], 2)+Hand.get(0).getFaceValue();
+			}
+			else{
+				for(int x=0,j=5;x<HANDSIZE;x++,j--){
+					gameValue+=Math.pow(card[x],j);
+				}
+			}
+		}
+		else if(this.isFourOfAKind()){
+			gameValue=FOUROFAKIND;
+			if(card[0]==card[1]){
+				gameValue+=card[0];
+			}
+			else{
+				gameValue+=card[1];
+			}
+		}
+		else if(this.isFullHouse()){
+			gameValue=FULLHOUSE+card[2];
+		}
+		
+		else if(this.isFlush()){
+			gameValue=FLUSH;
 			for(int x=0,j=5;x<HANDSIZE;x++,j--){
-				gameValue+=Math.pow(check[x],j);
+				gameValue+=Math.pow(card[x],j);
 			}
 		}
-		else if(this.isOnePair()){
-			gameValue=ONEPAIR;
-			//Finds which cards are the pair and weights them accordingly
-			if(check[0]==check[1]){
-				gameValue+=Math.pow(check[0], 4)+Math.pow(check[2],3)+Math.pow(check[3], 2)+check[4];
+		else if(this.isStraight()){
+			gameValue=STRAIGHT;
+			//carding for the 5 high straight where Ace is low. In this case 5 will be the second card in the hand
+			//Due to our sort() method sorting by gameValue
+			if(card[1]==5){
+				gameValue+=Math.pow(card[1], 5)+Math.pow(card[2], 4)+Math.pow(card[3], 3)+Math.pow(card[4], 2)+Hand.get(0).getFaceValue();
 			}
-			else if(check[1]==check[2]){
-				gameValue+=Math.pow(check[1], 4)+Math.pow(check[0],3)+Math.pow(check[3], 2)+check[4];
+			else{
+				for(int x=0,j=5;x<HANDSIZE;x++,j--){
+					gameValue+=Math.pow(card[x],j);
+				}
 			}
-			else if(check[2]==check[3]){
-				gameValue+=Math.pow(check[2], 4)+Math.pow(check[0],3)+Math.pow(check[1], 2)+check[4];
+		}
+		
+		else if(this.isThreeOfAKind()){
+			gameValue=THREEOFAKIND;
+			if(card[0]==card[1]&card[1]==card[2]){
+				gameValue+=Math.pow(card[0], 3)+Math.pow(card[3], 2)+card[4];
 			}
-			else if(check[3]==check[4]){
-				gameValue+=Math.pow(check[3], 4)+Math.pow(check[0],3)+Math.pow(check[1], 2)+check[2];
+			else if(card[1]==card[2]&card[2]==card[3]){
+				gameValue+=Math.pow(card[1], 3)+Math.pow(card[0], 2)+card[4];
+			}
+			else{
+				gameValue+=Math.pow(card[2], 3)+Math.pow(card[0], 2)+card[1];
 			}
 		}
 		else if(this.isTwoPair()){
 			gameValue=TWOPAIR;
 			//Finds the cards that are paired and weights them accordingly
-			if(check[0]==check[1]&&check[2]==check[3]){
-				gameValue+=Math.pow(check[0], 3)+Math.pow(check[2], 2)+check[4];
+			if(card[0]==card[1]&&card[2]==card[3]){
+				gameValue+=Math.pow(card[0], 3)+Math.pow(card[2], 2)+card[4];
 			}
-			else if(check[0]==check[1]&&check[3]==check[4]){
-				gameValue+=Math.pow(check[0], 3)+Math.pow(check[3], 2)+check[2];
-			}
-			else{
-				gameValue+=Math.pow(check[1], 3)+Math.pow(check[3], 2)+check[0];
-			}
-		}
-		else if(this.isThreeOfAKind()){
-			gameValue=THREEOFAKIND;
-			if(check[0]==check[1]&check[1]==check[2]){
-				gameValue+=Math.pow(check[0], 3)+Math.pow(check[3], 2)+check[4];
-			}
-			else if(check[1]==check[2]&check[2]==check[3]){
-				gameValue+=Math.pow(check[1], 3)+Math.pow(check[0], 2)+check[4];
+			else if(card[0]==card[1]&&card[3]==card[4]){
+				gameValue+=Math.pow(card[0], 3)+Math.pow(card[3], 2)+card[2];
 			}
 			else{
-				gameValue+=Math.pow(check[2], 3)+Math.pow(check[0], 2)+check[1];
+				gameValue+=Math.pow(card[1], 3)+Math.pow(card[3], 2)+card[0];
 			}
 		}
-		else if(this.isStraight()){
-			gameValue=STRAIGHT;
-			//Checking for the 5 high straight where Ace is low. In this case 5 will be the second card in the hand
-			//Due to our sort() method sorting by gameValue
-			if(check[1]==5){
-				gameValue+=Math.pow(check[1], 5)+Math.pow(check[2], 4)+Math.pow(check[3], 3)+Math.pow(check[4], 2)+Hand.get(0).getFaceValue();
+		else if(this.isOnePair()){
+			gameValue=ONEPAIR;
+			//Finds which cards are the pair and weights them accordingly
+			if(card[0]==card[1]){
+				gameValue+=Math.pow(14, 3)*card[0]+Math.pow(14,2)*card[2]+14*card[3]+card[4];
 			}
-			else{
-				for(int x=0,j=5;x<HANDSIZE;x++,j--){
-					gameValue+=Math.pow(check[x],j);
-				}
+			else if(card[1]==card[2]){
+				gameValue+=Math.pow(14, 3)*card[1]+Math.pow(14,2)*card[0]+14*card[3]+card[4];
 			}
-		}
-		else if(this.isFlush()){
-			gameValue=FLUSH;
-			for(int x=0,j=5;x<HANDSIZE;x++,j--){
-				gameValue+=Math.pow(check[x],j);
+			else if(card[2]==card[3]){
+				gameValue+=Math.pow(14, 3)*card[2]+Math.pow(14,2)*card[0]+14*card[1]+card[4];
 			}
-		}
-		else if(this.isFullHouse()){
-			gameValue=FULLHOUSE;
-			if(check[0]==check[1]&&check[1]==check[2]){
-				gameValue+=Math.pow(check[0], 2)+check[3];
-			}
-			else{
-				gameValue+=Math.pow(check[4],2)+check[0];
-			}
-		}
-		else if(this.isFourOfAKind()){
-			gameValue=FOUROFAKIND;
-			if(check[0]==check[1]){
-				gameValue+=Math.pow(check[0], 2)+check[4];
-			}
-			else{
-				gameValue+=Math.pow(check[4], 2)+check[0];
-			}
-		}
-		else if(this.isStraightFlush()){
-			gameValue=STRAIGHTFLUSH;
-			//Checking for the 5 high Straight Flush where Ace is low. In this case 5 will be the second card in the hand
-			//Due to our sort() method sorting by gameValue
-			if(check[1]==5){
-				gameValue+=Math.pow(check[4], 5)+Math.pow(check[3], 4)+Math.pow(check[2], 3)+Math.pow(check[1], 2)+Hand.get(0).getFaceValue();
-			}
-			else{
-				for(int x=0,j=5;x<HANDSIZE;x++,j--){
-					gameValue+=Math.pow(check[x],j);
-				}
+			else if(card[3]==card[4]){
+				gameValue+=Math.pow(14, 3)*card[3]+Math.pow(14,2)*card[0]+14*card[1]+card[2];
 			}
 		}
 		else{
-			gameValue=ROYALFLUSH;
+			//Best Card^5+Second Best^4+Third Best^3...etc
+			for(int x=0,j=5;x<HANDSIZE;x++,j--){
+				gameValue+=Math.pow(card[x],j);
+			}
 		}
 		
 		return gameValue;
@@ -368,331 +319,214 @@ public class HandOfCards {
 	 * purely based its gamevalue I used this formula ((14-check[cardPosition])*7.7) which splits the range 0-100 into 14 pieces
 	 * and assigned to the card. */
 	public int getDiscardProbability(int cardPosition){
-		int[] check=new int[HANDSIZE];
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
+		int discardProbability = 0;
+		//checks for invalid input
+		if(cardPosition!=0&&cardPosition!=1&&cardPosition!=2&&cardPosition!=3&&cardPosition!=4){
+			discardProbability =0;
 		}
-		//If invalid position entered return 0
-		if(cardPosition<0||cardPosition>4){
-			return 0;
+		//checks what type of hand the hand is
+		if(isRoyalFlush()==true){
+			discardProbability =0;
 		}
-		//If best hand in the game do not discard
-		if(this.isRoyalFlush()){
-			return 0;
+		else if(isStraightFlush()==true){
+			discardProbability = 0;
 		}
-		//Returns the probability of improving straight flush
-		if(this.isStraightFlush()){
-			if(cardPosition==4){
-				return 8;
-			}
-			else{
-				return 0;
-			}
+		else if(isFourOfAKind()==true){
+			discardProbability = 0;
 		}
-		
-		if(this.isFourOfAKind()){
-			//If the card position is one of the four of a kind then don't discard
-			if(this.fourOfAKindPosition()==cardPosition||this.fourOfAKindPosition()+1==cardPosition||this.fourOfAKindPosition()+2==cardPosition||this.fourOfAKindPosition()+3==cardPosition){
-				return 0;
-			}
-			//Else use the evaluation formula to get the probability of discard
-			else{
-				return (int) ((14-check[cardPosition])*7.7);
-			}
+		else if(isFullHouse()==true){
+			discardProbability=0;
 		}
-		if(this.isFullHouse()){
-			//If the card position is one of the three of a kind then don't discard
-			if(this.fullHousePosition()==cardPosition||this.fullHousePosition()+1==cardPosition||this.fullHousePosition()+2==cardPosition){
-				return 0;
+		else if(isFlush()==true){
+			discardProbability=0;
+		}
+		else if(isStraight()==true){
+			//not worth risking losing the straight to get a flush if it is a busted flush.
+			discardProbability=0;
+		}
+		else if(isThreeOfAKind()==true){
+			//discard low non-trip, to get full house
+			if(cardPosition==this.lowNonTrip){
+				discardProbability=100;
 			}
-			//Else return the probability of getting a four of a kind by discarding the pair
-			else{
-				return 9;
+			//discard both some-of the time, to get 4OK
+			if(cardPosition==this.highNonTrip){
+				discardProbability=20;
 			}
 		}
 		
-		if(this.isFlush()){
-			//If the hand is a flush then return the probability of getting a higher flush
-			if(cardPosition==4){
-				return (14-check[0]);
-			}
-			else{
-				return 0;
+		else if(isTwoPair()==true){
+			if(cardPosition==this.nonTwoPair){
+				discardProbability = 70; //high probability as lessening the hand will only lessen the kicker
 			}
 			
 		}
-		//If the card position is the position that the flush is busted then discard
-		if(this.isBustedFlush()==cardPosition){
-			//if the busted flush contains a pair then return the probability of improving the hand
-			if(this.isOnePair()){
-				if(cardPosition==0||cardPosition==4){
-					return 25;
+		
+		else if(this.isOnePair()){
+			//checks if it is a bustedFlush/bustedStraight
+			if(this.isBustedFlush()&&this.isBustedStraight()){
+				if((this.bustedFlushCard==this.bustedStraightCard)&&(this.bustedFlushCard==cardPosition)){
+					discardProbability = 100;
 				}
 			}
-			//If it is a straight then return the probability of improving the hand
-			else if(this.isStraight()){
-				return 11;
+			else if(this.isBustedFlush()){
+				if(this.bustedFlushCard==cardPosition){
+					discardProbability = 100;
+				}
+			}
+			else if(this.isBustedStraight()){
+				if(this.bustedStraightCard==cardPosition){
+					discardProbability = 100;
+					return discardProbability;
+				}
 			}
 			else{
-				return 100;
+				if(cardPosition==this.lowNonPair){
+					discardProbability = 100;
+				}
+				else if(cardPosition==this.midNonPair){
+					discardProbability = 50;
+				}
+				else if(cardPosition==this.highNonPair){
+					discardProbability = 10;
+				}
 			}
 		}
 		
-		if(this.isStraight()){
-			if(cardPosition==4){
-				return 4;
-			}
-			return 0;
-		}
-		//If the card position is the position that the flush is busted then discard
-		if(this.isBustedStraight()==cardPosition){
-			if(this.isOnePair()){
-				//Open ended with pair
-				if(cardPosition==0||cardPosition==4){
-					return 10;
-				}
-				else{
-					return 12;
+		else if(this.isHighHand()){
+			//checks if it is a bustedFlush/bustedStraight
+			if(this.isBustedFlush()&&this.isBustedStraight()){
+				if((this.bustedFlushCard==this.bustedStraightCard)&&(this.bustedFlushCard==cardPosition)){
+					discardProbability = 100;
 				}
 			}
-			else{
-				return 100;
+			else if(this.isBustedFlush()){
+				if(this.bustedFlushCard==cardPosition){
+					discardProbability = 100;
+				}
 			}
+			else if(this.isBustedStraight()){
+				if(this.bustedStraightCard==cardPosition){
+					discardProbability = 100;
+				}
+			}
+			else{//discard worst card, and 2nd worst some of the time
+				if(cardPosition==4){
+					discardProbability = 100;
+					return discardProbability;
+				}
+				else if(cardPosition==3){
+					discardProbability = 50;
+					return discardProbability;
+				}
+				else if(cardPosition==2){
+					discardProbability = 10;
+					return discardProbability;
+				}
+			}		
 		}
-		if(this.isThreeOfAKind()){
-			//Discard all but the three of a kind cards based on the evaluation function
-			if(this.threeOfAKindPosition()==cardPosition||this.threeOfAKindPosition()+1==cardPosition||this.threeOfAKindPosition()+2==cardPosition){
-				return 0;
-			}
-			else{
-				return (int) ((14-check[cardPosition])*7.7);
-			}
-		}
-		if(this.isTwoPair()){
-			//Discard all except the two pairs based on the evaluation function
-			if(this.twoPairPosition()[0]==cardPosition||this.twoPairPosition()[0]+1==cardPosition||this.twoPairPosition()[1]==cardPosition||this.twoPairPosition()[1]+1==cardPosition){
-				return 0;
-			}
-			else{
-				return (int) ((14-check[cardPosition])*7.7);
-			}
-		}
-		//Discard all except one pair based on the evaluation function
-		if(this.isOnePair()){
-			if(this.onePairPosition()==cardPosition||this.onePairPosition()+1==cardPosition){
-				return 0;
-			}
-			else{
-				return (int) ((14-check[cardPosition])*7.7);
-			}
-		}
-		if(this.isHighHand()){
-			//Return the probability using the evaluation function
-			return (int) ((14-check[cardPosition])*7.7);
-		}
-		return 0;
+		return discardProbability;
 	}
-	
-	//This method goes through the hand to see if it is a busted straight and returns the position of the card that busts it
-	private int isBustedStraight(){
-		if(this.isStraight()){
-			return -1;
-			}
-		int[] check=new int[HANDSIZE];
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
+	public boolean isBustedFlush(){
+		if(card3[0]==card3[1]&&card3[0]==card3[2]&&card3[0]==card3[3]&&card3[0]!=card3[4]){
+			bustedFlushCard = 4;
+			return true;
 		}
-		
-		if(this.isOnePair()){
-			//ppxxx
-			if((check[0]==check[1]&&(check[1]==check[2]+2||check[1]==check[2]+1)&&check[2]==check[3]+1&&check[3]==check[4]+1)){
-				return 0;
-			}
-			//xppxx
-			else if((check[1]==check[2]&&check[0]==check[1]+1&&check[2]==check[3]+1&&check[3]==check[4]+1)){
-				return 1;
-			}
-			//xxppx
-			else if((check[0]==check[1]+1&&check[1]==check[2]+1&&check[2]==check[3]&&check[3]==check[4]+1)){
-				return 2;
-			}
-			//xxxpp
-			else if((check[0]==check[1]+1&&check[1]==check[2]+1&&(check[2]==check[3]+1||check[2]==check[3]+2)&&check[3]==check[4])){
-				return 3;
-			}
-			//aaxxx
-			else if(check[0]==14&&check[0]==check[1]&&(check[0]==check[2]+9||check[0]==check[2]+10)&&check[2]==check[3]+1&&check[3]==check[4]+1){
-				return 0;
-			}
+		else if(card3[0]==card3[1]&&card3[0]==card3[2]&&card3[0]!=card3[3]&&card3[0]==card3[4]){
+			bustedFlushCard = 3;
+			return true;
 		}
-		//xxxxy
-		if(check[0]==check[1]+1&&check[1]==check[2]+1&&check[2]==check[3]+1){
-			return 4;
+		else if(card3[0]==card3[1]&&card3[0]!=card3[2]&&card3[0]==card3[3]&&card3[0]==card3[4]){
+			bustedFlushCard = 2;
+			return true;
 		}
-		//yxxxx
-		else if(check[3]==check[4]+1&&check[1]==check[2]+1&&check[2]==check[3]+1){
-			return 0;
+		else if(card3[0]!=card3[1]&&card3[0]==card3[2]&&card3[0]==card3[3]&&card3[0]==card3[4]){
+			bustedFlushCard = 1;
+			return true;
 		}
-		//xyxxx
-		else if(check[0]==check[2]+2&&check[2]==check[3]+1&&check[3]==check[4]+1){
-			return 1;
-		}
-		//xxyxx
-		else if(check[0]==check[1]+1&&check[1]==check[3]+2&&check[3]==check[4]+1){
-			return 2;
-		}
-		//xxxyx
-		else if(check[0]==check[1]+1&&check[1]==check[2]+1&&check[2]==check[4]+2){
-			return 3;
-		}
-		return -1;
-	}
-	
-	//This method goes through the hand to see if it is a busted flush and returns the position of the card that busts it
-	private int isBustedFlush(){
-		if(this.isFlush()){
-			return -1;
-			}
-		int[] check=new int[HANDSIZE];
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getSuit();
-		}
-		//xxxxy
-		if(check[0]==check[1]&&check[1]==check[2]&&check[2]==check[3]){
-			return 4;
-		}
-		//yxxxx
-		else if(check[1]==check[2]&&check[2]==check[3]&&check[3]==check[4]){
-			return 0;
-		}
-		//xyxxx
-		else if(check[0]==check[2]&&check[2]==check[3]&&check[3]==check[4]){
-			return 1;
-		}
-		//xxyxx
-		else if(check[0]==check[1]&&check[1]==check[3]&&check[3]==check[4]){
-			return 2;
-		}
-		//xxxyx
-		else if(check[0]==check[1]&&check[1]==check[2]&&check[2]==check[4]){
-			return 3;
-		}
-		return -1;
-	}
-	
-	//Gets the position of the pair
-	private int onePairPosition(){
-		if(!this.isOnePair()){
-			return -1;
-		}
-		int[] check=new int[HANDSIZE];
-		int pairPosition = -1;
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
-		}
-		if(check[0]==check[1]){
-			pairPosition=0;
-		}
-		else if(check[1]==check[2]){
-			pairPosition=1;
-		}
-		else if(check[2]==check[3]){
-			pairPosition=2;
-		}
-		else if(check[3]==check[4]){
-			pairPosition=3;
-		}
-		return pairPosition;
-	}
-	
-	//Gets the position of the two pair
-	private int[] twoPairPosition(){
-		int[] pairPosition=new int[2];
-		if(!this.isTwoPair()){
-			pairPosition[0]=-1;
-		}
-		int[] check=new int[HANDSIZE];
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
-		}
-		//xxyyp
-		if(check[0]==check[1]&&check[2]==check[3]){
-			pairPosition[0]=0;
-			pairPosition[1]=2;
-		}
-		//xxpyy
-		else if(check[0]==check[1]&&check[3]==check[4]){
-			pairPosition[0]=0;
-			pairPosition[1]=3;
-		}
-		//pxxyy
-		else if(check[1]==check[2]&&check[3]==check[4]){
-			pairPosition[0]=1;
-			pairPosition[1]=3;
-		}
-		return pairPosition;
-	}
-	//Gets the position of the three of a kind
-	private int threeOfAKindPosition(){
-		int setPosition=-1;
-		if(!this.isThreeOfAKind()){
-			return -1;
-		}
-		int[] check=new int[HANDSIZE];
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
-		}
-		//xxxyy
-		if(check[0]==check[1]&&check[1]==check[2]){
-			setPosition=0;
-		}
-		//yxxxy
-		else if(check[1]==check[2]&&check[2]==check[3]){
-			setPosition=1;
-		}
-		//yyxxx
-		else if(check[2]==check[3]&&check[3]==check[4]){
-			setPosition=2;
-		}
-		return setPosition;
-	}
-	
-	//Gets the position of the three of a kind in the full house
-	private int fullHousePosition(){
-		int setPosition=-1;
-		if(!this.isFullHouse()){
-			return -1;
-		}
-		int[] check=new int[HANDSIZE];
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
-		}
-		if(check[0]==check[1]&&check[1]==check[2]){
-			setPosition=0;
-		}
-		else if(check[1]==check[2]&&check[2]==check[3]){
-			setPosition=1;
-		}
-		else if(check[2]==check[3]&&check[3]==check[4]){
-			setPosition=2;
-		}
-		return setPosition;
-	}
-	//Gets the position of the four of a kind
-	private int fourOfAKindPosition(){
-		if(!this.isFourOfAKind()){
-			return -1;
-		}
-		int[] check=new int[HANDSIZE];
-		for(int x=0;x<HANDSIZE;x++){
-			check[x]=Hand.get(x).getGameValue();
-		}
-		if(check[0]==check[1]&&check[1]==check[2]&&check[2]==check[3]){
-			return 0;
+		else if(card3[1]!=card3[0]&&card3[1]==card3[2]&&card3[1]==card3[3]&&card3[1]==card3[4]){
+			bustedFlushCard = 0;
+			return true;
 		}
 		else{
-			return 1;
+			return false;
 		}
+	}
+	
+	public boolean isBustedStraight(){
+		//ACE LOW STRAUGHT
+		if(card[0]==14&&card[1]!=6){
+			//ACE LOW CONTAINING A PAIR
+			if(isOnePair()==true){
+				if(leadPairCard==1){
+					if((card[2]==4&&card[3]==3&&card[4]==2)||(card[2]==5&&card[3]==3&&card[4]==2)||(card[2]==5&&card[3]==4&&card[4]==2)||(card[2]==5&&card[3]==4&&card[4]==3)){
+						bustedStraightCard = 2;
+						return true;
+					}
+				}
+				else if(leadPairCard==2){
+					if((card[1]==4&&card[3]==3&&card[4]==2)||(card[1]==5&&card[3]==3&&card[4]==2)||(card[1]==5&&card[3]==4&&card[4]==2)||(card[1]==5&&card[3]==4&&card[4]==3)){
+						bustedStraightCard = 3;
+						return true;
+					}
+				}
+				else if(leadPairCard==3){
+					if((card[1]==4&&card[2]==3&&card[3]==2)||(card[1]==5&&card[2]==3&&card[3]==2)||(card[1]==5&&card[2]==4&&card[3]==2)||(card[1]==5&&card[2]==4&&card[3]==3)){
+						bustedStraightCard = 3;
+						return true;
+					}		
+				}
+				else{
+					return false;
+				}
+			}
+			//ACE LOW STRAIGHT THAT DOESN'T CONTAIN A PAIR
+			else if(isHighHand()==true){
+				if((card[2]==4&&card[3]==3&&card[4]==2)||(card[2]==5&&card[3]==3&&card[4]==2)||(card[2]==5&&card[3]==4&&card[4]==2)||(card[2]==5&&card[3]==4&&card[4]==3)){
+					bustedStraightCard = 1;
+					return true;
+				}		
+			}
+		}
+	//ALL OTHER CASES	
+		if(isOnePair()==true){
+			if(leadPairCard==0){
+				if((card[0]-1==card[2]&&card[0]-2==card[3]&&card[0]-3==card[4])||(card[0]-1==card[2]&&card[0]-2==card[3]&&card[0]-4==card[4])||(card[0]-1==card[2]&&card[0]-3==card[3]&&card[0]-4==card[4])||(card[0]-2==card[2]&&card[0]-3==card[3]&&card[0]-4==card[4])){
+					bustedStraightCard = 1;
+					return true;
+				}
+			}
+			else if(leadPairCard==1){
+				if((card[1]+1==card[0]&&card[1]-1==card[3]&&card[1]-2==card[4])||(card[1]+2==card[0]&&card[1]-1==card[3]&&card[1]-2==card[4])||(card[1]+1==card[0]&&card[1]-2==card[3]&&card[1]-3==card[4])||(card[1]+2==card[0]&&card[1]-1==card[3]&&card[1]-3==card[4])){
+					bustedStraightCard = 2;
+					return true;
+				}
+			}
+			else if(leadPairCard==2){
+				if((card[2]+2==card[0]&&card[2]+1==card[1]&&card[2]-1==card[4])||(card[2]+3==card[0]&&card[2]+2==card[1]&&card[2]-1==card[4])||(card[2]+3==card[0]&&card[2]+1==card[1]&&card[2]-1==card[4])||(card[2]+2==card[0]&&card[2]+1==card[1]&&card[2]-2==card[4])){
+					bustedStraightCard = 3;
+					return true;
+				}
+			}
+			else if(leadPairCard==3){
+				if((card[3]+3==card[0]&&card[3]+2==card[1]&&card[3]+1==card[2])||(card[3]+4==card[0]&&card[3]+3==card[1]&&card[3]+2==card[2])||(card[3]+4==card[0]&&card[3]+2==card[1]&&card[3]+1==card[2])||(card[3]+4==card[0]&&card[3]+3==card[1]&&card[3]+1==card[2])){
+					bustedStraightCard = 4;
+					return true;
+				}
+			}
+		}
+		//NON PAIR CASE
+		else{
+			if((card[0]-1==card[1]&&card[0]-2==card[2]&&card[0]-3==card[3])||(card[0]-1==card[1]&&card[0]-2==card[2]&&card[0]-4==card[3])||(card[0]-1==card[1]&&card[0]-3==card[2]&&card[0]-4==card[3])||(card[0]-2==card[1]&&card[0]-3==card[2]&&card[0]-4==card[3])){
+				bustedStraightCard = 0;
+				return true;
+			}
+			else if((card[1]-1==card[2]&&card[1]-2==card[3]&&card[1]-3==card[4])||(card[1]-1==card[2]&&card[1]-2==card[3]&&card[1]-4==card[4])||(card[1]-1==card[2]&&card[1]-3==card[3]&&card[1]-4==card[4])||(card[1]-2==card[2]&&card[1]-3==card[3]&&card[1]-4==card[4])){
+				bustedStraightCard = 4;
+				return true;
+			}
+		}
+	return false;
 	}
 	//Removes the PlayingCard at index cardNumber
 	public PlayingCard removeCard(int cardNumber){
@@ -711,6 +545,20 @@ public class HandOfCards {
 	
 	public String toString(){
 		return Hand.toString();
+		
+	}
+
+	public static void main(String[] args){
+		DeckOfCards Deck=new DeckOfCards();
+		HandOfCards Hand=new HandOfCards(Deck);
+		HandOfCards Hand2=new HandOfCards(Deck);
+		SetHand set=new SetHand(Hand,18);
+		SetHand set2=new SetHand(Hand2,12);
+		Hand.getValues();
+		Hand2.getValues();
+		System.out.println(Hand+" "+Hand.isStraight()+" "+Hand.getDiscardProbability(0)+" "+Hand.getDiscardProbability(1)+" "+Hand.getDiscardProbability(2)+" "+Hand.getDiscardProbability(3)+" "+Hand.getDiscardProbability(4)+" ");
+		System.out.println(Hand2+" "+Hand2.isStraight()+" "+Hand2.getGamevalue());
+		
 		
 	}
 }
