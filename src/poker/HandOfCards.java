@@ -584,6 +584,7 @@ public class HandOfCards {
 		return Hand.toString();
 		
 	}
+	
 
 	public static void main(String[] args){
 		DeckOfCards Deck=new DeckOfCards();

@@ -21,6 +21,7 @@ public class HandOfPoker {
 		Human.dealHand(Deck);
 		for(int i=0; i<Bots.size() ;i++){
 			Bots.get(i).dealHand(Deck);
+			Bots.get(i).updatePercentages();
 		}
 	}
 
@@ -39,14 +40,23 @@ public class HandOfPoker {
 		}
 	}
 	public void betting(int amount){
-		if(Human.canOpen()&&!Human.Folded){
-			Human.bet(amount);
-		}
-		for(int i=0; i<Bots.size() ;i++){
-			if(Bots.get(i).canOpen()&&!Bots.get(i).Folded){
-				//Some code to handle the bots betting
+		
+		int currentStake=amount;
+		int humanStake;
+			if(Human.canOpen()&&!Human.Folded){
+				humanStake=Human.bet(amount);
+				if(humanStake>currentStake){
+					currentStake=humanStake;
+				}
 			}
-		}
+			for(int i=0; i<Bots.size() ;i++){
+				if(Bots.get(i).canOpen()&&!Bots.get(i).Folded){
+					int botsStake=Bots.get(i).bet(amount);
+					if(botsStake>currentStake){
+						currentStake=botsStake;
+					}
+				}
+			}
 	}
 	public void folding(String fold) {
 		if(fold=="yes"){

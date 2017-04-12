@@ -2,7 +2,7 @@ package poker;
 
 
 public abstract class PokerPlayer {
-	private static final int DEFAULTCHIPCOUNT=5000;
+	private static final int DEFAULTCHIPCOUNT=10;
 	protected DeckOfCards Deck;
 	public HandOfCards Hand;
 	private int Bank=DEFAULTCHIPCOUNT;
@@ -54,8 +54,6 @@ public abstract class PokerPlayer {
 			Deck.returnCard(Hand.removeCard(x));
 		}
 		Folded=true;
-	}
-	public void bet(){
 	}
 	public String showHand(){
 		return Hand.toString();

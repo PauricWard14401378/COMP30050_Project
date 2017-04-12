@@ -21,13 +21,14 @@ public class HumanPokerPlayer extends PokerPlayer{
 		Hand.sort();	
 	}
 
-	public void bet(int bet){
+	public int bet(int bet){
 		if(bet==0){
-			return;
+			return 0;
 		}
 		else{
 			removeFromBank(bet);
 		}
+		return bet;
 	}
 
 }
