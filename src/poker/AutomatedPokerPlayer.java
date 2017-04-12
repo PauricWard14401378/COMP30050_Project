@@ -4,8 +4,12 @@ import java.util.Random;
 
 public class AutomatedPokerPlayer extends PokerPlayer{
 	
-	public AutomatedPokerPlayer(DeckOfCards deck) {
-		super(deck);
+	public String Name;
+	public int[] personality=new int[4];
+	
+	public AutomatedPokerPlayer(DeckOfCards Deck,String name) {
+		super(Deck);
+		Name=name;
 	}
 	public void discard(){
 		Random rand=new Random();
@@ -34,9 +38,6 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		}
 		//Resort the Hand
 		Hand.sort();	
-	}
-	public String call(){
-		return "";
 	}
 
 }
