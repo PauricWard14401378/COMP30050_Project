@@ -3,6 +3,11 @@ package poker;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
+
 public class GameOfPoker {
 	private ArrayList<AutomatedPokerPlayer> bots=new ArrayList<AutomatedPokerPlayer>();
 	private Scanner input=new Scanner(System.in);
@@ -10,12 +15,16 @@ public class GameOfPoker {
 	private DeckOfCards Deck;
 	private String[] BotsNames={"Tom","Dick","Harry","Sally"};
 	private ArrayList<PokerPlayer> Players=new ArrayList<PokerPlayer>();
+	TwitterAPI Twitter;
 	
-	GameOfPoker(int numbots, DeckOfCards deck){
+	
+	GameOfPoker(int numbots, DeckOfCards deck,TwitterAPI twitter) throws TwitterException{
 		Deck=deck;
+		Twitter=twitter;
 		welcome();
 		initializebots(numbots);
 		playGame();
+		
 	}
 	
 	private void welcome() {
@@ -35,7 +44,7 @@ public class GameOfPoker {
 		
 	}
 	
-	private void playGame(){
+	private void playGame() throws TwitterException{
 		while(!human.isBankrupt()&& bots.size()>0){
 			HandOfPoker round = new HandOfPoker(human, bots, Deck);
 			for(int i=0;i<bots.size();i++){
@@ -96,11 +105,14 @@ public class GameOfPoker {
 				round.betting(0);
 			}
 			round.compareHands();
+			
+			
 		}
 	}
-	public static void main(String[] args){
+	public static void main(String[] args) throws TwitterException{
+		TwitterAPI twitter=new TwitterAPI();
 		DeckOfCards Deck=new DeckOfCards();
-		GameOfPoker game=new GameOfPoker(2,Deck);
+		GameOfPoker game=new GameOfPoker(2,Deck,twitter);
 		
 	}
 }

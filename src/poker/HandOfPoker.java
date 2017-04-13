@@ -65,19 +65,16 @@ public class HandOfPoker {
 					}
 				}
 				else{
+					System.out.println(Players.get(i).Name+" says: I fold!");
+					Players.get(i).fold();
 					Players.remove(i);
 				}
 			}
 		}while(raised==true);
 	}
 	public void folding(String fold) {
-		if(fold=="yes"){
+		if(fold.equals("yes")){
 			Human.fold();
-		}
-		for(int i=0; i<Bots.size() ;i++){
-			if(false/*Insert some way of deciding when bot should fold*/){
-				Bots.get(i).fold();
-			}
 		}
 	}
 	public void compareHands(){
