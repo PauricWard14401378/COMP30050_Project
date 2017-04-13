@@ -9,6 +9,7 @@ public class GameOfPoker {
 	private HumanPokerPlayer human;
 	private DeckOfCards Deck;
 	private String[] BotsNames={"Tom","Dick","Harry","Sally"};
+	private ArrayList<PokerPlayer> Players=new ArrayList<PokerPlayer>();
 	
 	GameOfPoker(int numbots, DeckOfCards deck){
 		Deck=deck;
@@ -80,16 +81,26 @@ public class GameOfPoker {
 			System.out.println("Would you like to fold?");
 			String fold=input.nextLine();
 			round.folding(fold);
-			System.out.println("How much would you like to bet? (Enter 0 if you would not like to bet)");
-			String betting=input.nextLine();
-			int bet=Integer.parseInt(betting);
-			round.betting(bet);
+			if(human.canOpen()){
+				System.out.println("Would you like to open the betting?");
+				String open=input.nextLine();
+				System.out.println(open);
+				if(open.equals("yes")){
+					System.out.println("How much would you like to bet?");
+					String betting =input.nextLine();
+					int openBet=Integer.parseInt(betting);
+					round.betting(openBet); 
+				}
+			}
+			else{
+				round.betting(0);
+			}
 			round.compareHands();
 		}
 	}
 	public static void main(String[] args){
 		DeckOfCards Deck=new DeckOfCards();
-		GameOfPoker game=new GameOfPoker(1,Deck);
+		GameOfPoker game=new GameOfPoker(2,Deck);
 		
 	}
 }

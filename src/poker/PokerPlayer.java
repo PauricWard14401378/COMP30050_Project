@@ -7,7 +7,8 @@ public abstract class PokerPlayer {
 	public HandOfCards Hand;
 	private int Bank=DEFAULTCHIPCOUNT;
 	private boolean Bankrupt=false;
-	public boolean Folded=false;
+	public boolean CanOpen;
+	public String Name;
 	
 	//The PokerPlayer constructor takes as input a deck of cards and deals a hand to the poker player
 	public PokerPlayer(DeckOfCards deck){
@@ -20,9 +21,11 @@ public abstract class PokerPlayer {
 	//This method Discards cards back to the deck and receives card from the deck to replace them
 	public boolean canOpen(){
 		if(Hand.getGamevalue()>=HandOfCards.ONEPAIR){
+			CanOpen=true;
 			return true;
 		}
 		else{
+			CanOpen=true;
 			return false;
 		}
 	}
@@ -53,10 +56,21 @@ public abstract class PokerPlayer {
 		for(int x =0;x<HandOfCards.HANDSIZE;x++){
 			Deck.returnCard(Hand.removeCard(x));
 		}
-		Folded=true;
 	}
 	public String showHand(){
 		return Hand.toString();
+	}
+	public int bet(int amount){
+		return amount;
+		
+	}
+	public boolean call(int amount){
+		return true;
+		
+	}
+	public boolean raise(){
+		return true;
+		
 	}
 
 }

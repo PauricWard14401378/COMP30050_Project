@@ -72,8 +72,13 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 	public int bet(int amount){
 		int rand1=rand.nextInt(100);
 		int scalePercentage=amount*10;
+		System.out.println(scalePercentage);
 		if(personality[1]-scalePercentage<=rand1){
 			this.removeFromBank(amount);
+		}
+		if(personality[0]-scalePercentage<=rand1){
+			this.removeFromBank(1);
+			amount+=1;
 		}
 		return amount;
 	}
@@ -104,6 +109,28 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		//Resort the Hand
 		Hand.sort();
 		updatePercentages();
+	}
+	public boolean call(int amount){
+		int rand1=rand.nextInt(100);
+		int scalePercentage=amount*10;
+		System.out.println(scalePercentage);
+		if(personality[1]-scalePercentage<=rand1){
+			this.removeFromBank(amount);
+			return true;
+		}
+		else{
+			return false;
+		}
+
+	}
+	public boolean raise(){
+		int rand1=rand.nextInt(100);
+		if(personality[0]<=rand1){
+			this.removeFromBank(1);
+			return true;
+		}
+		return false;
+		
 	}
 	
 

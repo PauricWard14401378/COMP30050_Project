@@ -1,8 +1,12 @@
 package poker;
 
+import java.util.Scanner;
+
+
 public class HumanPokerPlayer extends PokerPlayer{
 	
 	public String Name;
+	private Scanner input=new Scanner(System.in);
 	
 	public HumanPokerPlayer(DeckOfCards deck, String name) {
 		super(deck);
@@ -30,5 +34,26 @@ public class HumanPokerPlayer extends PokerPlayer{
 		}
 		return bet;
 	}
-
+	public boolean call(int amount){
+		System.out.println("Do you want to see the bet of "+amount+" chip(s)?");
+		String call=input.nextLine();
+		if(call.equals("yes")){
+			removeFromBank(amount);
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	public boolean raise(){
+		System.out.println("Do you want to raise the bet by 1 chip?");
+		String raise=input.nextLine();
+		if(raise.equals("yes")){
+			this.removeFromBank(1);
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 }
