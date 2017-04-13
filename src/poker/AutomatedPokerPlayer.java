@@ -3,7 +3,6 @@ package poker;
 import java.util.Random;
 
 public class AutomatedPokerPlayer extends PokerPlayer{
-	public String Name;
 	public int[] personality;
 	//Will play with type of hand, bet size depending on hand, 
 	private static final int[] NERVOUS={30,40};

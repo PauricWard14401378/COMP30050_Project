@@ -1,11 +1,13 @@
 package poker;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Scanner;
 
 
 public class HumanPokerPlayer extends PokerPlayer{
 	
-	public String Name;
+
 	private Scanner input=new Scanner(System.in);
 	
 	public HumanPokerPlayer(DeckOfCards deck, String name) {
@@ -13,10 +15,12 @@ public class HumanPokerPlayer extends PokerPlayer{
 		Name=name;
 	}
 	public void discard(int[] cards){
+		//Need to come up with a way to have cards discard in the right order no matter what input i.e 34 & 43 works at the minute with 34
 		if(cards.length>3){
 			throw new ArithmeticException("Unable to discard more than 3 cards");
 		}
-		for(int x =0;x<cards.length-1;x++){
+		System.out.println(cards[0]+" "+cards[1]+" "+cards.length);
+		for(int x=cards.length-1;x>=0;x--){
 			Deck.returnCard(Hand.removeCard(cards[x]));
 		}
 		//Replace the cards that were discarded

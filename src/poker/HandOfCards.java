@@ -571,10 +571,7 @@ public class HandOfCards {
 	}
 	//Replaces the cards that were discarded
 	public void replaceDiscarded(){
-		if(Hand.size()==HANDSIZE){
-			return;
-		}
-		else{
+		while(Hand.size()<HANDSIZE){
 			Hand.add(Deck.dealNext());
 		}
 		return;

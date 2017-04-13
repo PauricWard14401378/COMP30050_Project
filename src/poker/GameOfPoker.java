@@ -3,10 +3,7 @@ package poker;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
 
 public class GameOfPoker {
 	private ArrayList<AutomatedPokerPlayer> bots=new ArrayList<AutomatedPokerPlayer>();
@@ -27,6 +24,15 @@ public class GameOfPoker {
 		
 	}
 	
+	private void initializePlayers(HumanPokerPlayer human2, ArrayList<AutomatedPokerPlayer> bots2) {
+		
+		Players.add(human2);
+		for(int i=0;i<bots.size();i++){
+			Players.add(bots2.get(i));
+		}
+		System.out.println(Players.get(0).Name);
+	}
+
 	private void welcome() {
 		System.out.println("Welcome to the Automated Poker Machine!\nWhat is your name?");
 		String humanName=input.nextLine();
@@ -47,6 +53,7 @@ public class GameOfPoker {
 	private void playGame() throws TwitterException{
 		while(!human.isBankrupt()&& bots.size()>0){
 			HandOfPoker round = new HandOfPoker(human, bots, Deck);
+			initializePlayers(human,bots);
 			for(int i=0;i<bots.size();i++){
 				if(bots.get(i).isBankrupt()){
 					bots.remove(i);
@@ -55,29 +62,10 @@ public class GameOfPoker {
 			System.out.println("New Deal:");
 			System.out.println(human.Name+" has "+human.getChipCount()+" chip(s) in the bank");
 			for(int x=0;x<bots.size();x++){
-				System.out.println(bots.get(x).Name+" has "+human.getChipCount()+" chip(s) in the bank");
+				System.out.println(bots.get(x).Name+" has "+bots.get(x).getChipCount()+" chip(s) in the bank");
 			}
 			round.dealCards();
-			boolean[] names=round.opening();
-			for(int i=0;i<bots.size()+1;i++){
-				if(i==0){
-					if(human.canOpen()){
-						System.out.println(human.Name+" says: I can open");
-					}
-					else{
-						System.out.println(human.Name+" says: I cannot open");
-					}
-				}
-				else{
-					if(bots.get(i-1).canOpen()){
-						System.out.println(bots.get(i-1).Name+" says: I can open");
-						
-					}
-					else{
-						System.out.println(bots.get(i-1).Name+" says: I cannot open");
-					}
-				}
-			}
+			round.opening();
 			System.out.println("You have been dealt the following hand: \n"+human.showHand());
 			System.out.println("Which cards would you like to discard?");
 			String cards=input.nextLine();

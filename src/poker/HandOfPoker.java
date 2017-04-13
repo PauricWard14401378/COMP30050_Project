@@ -16,7 +16,6 @@ public class HandOfPoker {
 		Deck=deck;
 		initializePlayers(human,bots);
 		dealCards();
-		opening();
 	}
 	
 	
@@ -37,16 +36,20 @@ public class HandOfPoker {
 		}
 	}
 
-	public boolean[] opening() {
-		boolean[] canOpen=new boolean[Bots.size()+1];
-		for(int i=0; i<Players.size() ;i++){
-			canOpen[i]=Players.get(i).canOpen();
+	public void opening() {
+		for(int i=0;i<Players.size();i++){
+			if(Players.get(i).canOpen()){
+				System.out.println(Players.get(i).Name+" says: I can open");
+				
+			}
+			else{
+				System.out.println(Players.get(i).Name+" says: I cannot open");
+			}
 		}
-		return canOpen;
 	}
 	public void discardCards(int[] numcards) {
 		Human.discard(numcards);
-		for(int i=0; i<Bots.size() ;i++){
+		for(int i=0; i<Bots.size();i++){
 			Bots.get(i).discard();
 		}
 	}
