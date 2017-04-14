@@ -9,6 +9,7 @@ public abstract class PokerPlayer {
 	private boolean Bankrupt=false;
 	public boolean CanOpen;
 	public String Name;
+	public int stake=0;
 	
 	//The PokerPlayer constructor takes as input a deck of cards and deals a hand to the poker player
 	public PokerPlayer(DeckOfCards deck){
@@ -53,8 +54,9 @@ public abstract class PokerPlayer {
 		return Bankrupt;
 	}
 	public void fold(){
-		for(int x =0;x<HandOfCards.HANDSIZE;x++){
-			Deck.returnCard(Hand.removeCard(x));
+		stake=0;
+		for(int x=0;x<HandOfCards.HANDSIZE;x++){
+			Deck.returnCard(Hand.removeCard(0));
 		}
 	}
 	public String showHand(){

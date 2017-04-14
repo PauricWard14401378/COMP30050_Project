@@ -14,13 +14,12 @@ public class HumanPokerPlayer extends PokerPlayer{
 		super(deck);
 		Name=name;
 	}
-	public void discard(int[] cards){
-		//Need to come up with a way to have cards discard in the right order no matter what input i.e 34 & 43 works at the minute with 34
+	public void discard(Integer[] cards){
+		Arrays.sort(cards,Collections.reverseOrder());
 		if(cards.length>3){
 			throw new ArithmeticException("Unable to discard more than 3 cards");
 		}
-		System.out.println(cards[0]+" "+cards[1]+" "+cards.length);
-		for(int x=cards.length-1;x>=0;x--){
+		for(int x=0;x<cards.length;x++){
 			Deck.returnCard(Hand.removeCard(cards[x]));
 		}
 		//Replace the cards that were discarded
@@ -39,10 +38,11 @@ public class HumanPokerPlayer extends PokerPlayer{
 		return bet;
 	}
 	public boolean call(int amount){
-		System.out.println("Do you want to see the bet of "+amount+" chip(s)?");
+		System.out.println("Do you want to see the bet of "+Math.abs(amount-stake)+" chip(s)?");
 		String call=input.nextLine();
 		if(call.equals("yes")){
 			removeFromBank(amount);
+			stake+=amount;
 			return true;
 		}
 		else{
@@ -53,6 +53,7 @@ public class HumanPokerPlayer extends PokerPlayer{
 		System.out.println("Do you want to raise the bet by 1 chip?");
 		String raise=input.nextLine();
 		if(raise.equals("yes")){
+			stake+=1;
 			this.removeFromBank(1);
 			return true;
 		}

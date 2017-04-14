@@ -61,8 +61,8 @@ public class HandOfCards {
 	}
 	//This method sorts the hand of cards by the game value of the cards by overriding the comparator.
 	public void sort(){
-		Collections.sort(Hand,new Comparator<PlayingCard>(){
-			public int compare(PlayingCard one,PlayingCard two){
+		 Collections.sort(Hand,new Comparator<PlayingCard>(){
+		 @Override public int compare(PlayingCard one,PlayingCard two){
 				if(one.getGameValue()>=two.getGameValue()){
 					return -1;
 				}

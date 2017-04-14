@@ -6,6 +6,7 @@ import java.util.Scanner;
 import twitter4j.TwitterException;
 
 public class GameOfPoker {
+	//Need both a bots arraylist and a humanpokerplayer because you need to distinguish between both human and bot
 	private ArrayList<AutomatedPokerPlayer> bots=new ArrayList<AutomatedPokerPlayer>();
 	private Scanner input=new Scanner(System.in);
 	private HumanPokerPlayer human;
@@ -25,12 +26,10 @@ public class GameOfPoker {
 	}
 	
 	private void initializePlayers(HumanPokerPlayer human2, ArrayList<AutomatedPokerPlayer> bots2) {
-		
 		Players.add(human2);
 		for(int i=0;i<bots.size();i++){
 			Players.add(bots2.get(i));
 		}
-		System.out.println(Players.get(0).Name);
 	}
 
 	private void welcome() {
@@ -60,16 +59,18 @@ public class GameOfPoker {
 				}
 			}
 			System.out.println("New Deal:");
-			System.out.println(human.Name+" has "+human.getChipCount()+" chip(s) in the bank");
-			for(int x=0;x<bots.size();x++){
-				System.out.println(bots.get(x).Name+" has "+bots.get(x).getChipCount()+" chip(s) in the bank");
+			for(int x=0;x<Players.size();x++){
+				System.out.println(Players.get(x).Name+" has "+Players.get(x).getChipCount()+" chip(s) in the bank");
 			}
 			round.dealCards();
-			round.opening();
+			//If no one can open then re-deal
+			if(!round.opening()){
+				continue;
+			}
 			System.out.println("You have been dealt the following hand: \n"+human.showHand());
 			System.out.println("Which cards would you like to discard?");
 			String cards=input.nextLine();
-			int[] discardcards = new int[cards.length()];
+			Integer[] discardcards = new Integer[cards.length()];
 			for(int x=0;x<cards.length();x++){
 				discardcards[x]=Character.getNumericValue(cards.charAt(x));
 			}
@@ -81,12 +82,15 @@ public class GameOfPoker {
 			if(human.canOpen()){
 				System.out.println("Would you like to open the betting?");
 				String open=input.nextLine();
-				System.out.println(open);
 				if(open.equals("yes")){
 					System.out.println("How much would you like to bet?");
 					String betting =input.nextLine();
 					int openBet=Integer.parseInt(betting);
+					human.stake+=openBet;
 					round.betting(openBet); 
+				}
+				else{
+					round.betting(0);
 				}
 			}
 			else{
@@ -100,7 +104,8 @@ public class GameOfPoker {
 	public static void main(String[] args) throws TwitterException{
 		TwitterAPI twitter=new TwitterAPI();
 		DeckOfCards Deck=new DeckOfCards();
-		GameOfPoker game=new GameOfPoker(2,Deck,twitter);
+		@SuppressWarnings("unused")
+		GameOfPoker game=new GameOfPoker(3,Deck,twitter);
 		
 	}
 }

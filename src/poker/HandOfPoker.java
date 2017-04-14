@@ -18,7 +18,7 @@ public class HandOfPoker {
 		dealCards();
 	}
 	
-	
+
 	private void initializePlayers(HumanPokerPlayer human2, ArrayList<AutomatedPokerPlayer> bots2) {
 			Players.add(human2);
 			for(int i=0;i<bots2.size();i++){
@@ -36,18 +36,20 @@ public class HandOfPoker {
 		}
 	}
 
-	public void opening() {
+	public boolean opening() {
+		boolean canOpen=false;
 		for(int i=0;i<Players.size();i++){
 			if(Players.get(i).canOpen()){
 				System.out.println(Players.get(i).Name+" says: I can open");
-				
+				canOpen=true;
 			}
 			else{
 				System.out.println(Players.get(i).Name+" says: I cannot open");
 			}
 		}
+		return canOpen;
 	}
-	public void discardCards(int[] numcards) {
+	public void discardCards(Integer[] numcards) {
 		Human.discard(numcards);
 		for(int i=0; i<Bots.size();i++){
 			Bots.get(i).discard();
@@ -55,15 +57,20 @@ public class HandOfPoker {
 	}
 	public void betting(int amount){
 		boolean raised=false;
+		boolean firstSkipped=false;
 		int currentStake=amount;
 		do{
 			raised=false;
-			for(int i=0; i<Players.size() ;i++){
-				if(amount==0){
+			for(int i=0; i<Players.size();i++){
+				if(i==0&&firstSkipped==false){
+					firstSkipped=true;
 					continue;
 				}
 				if(Players.get(i).call(currentStake)){
+					currentStake=Players.get(i).stake;
+					raised=true;
 					if(Players.get(i).raise()){
+						currentStake++;
 						raised=true;
 					}
 				}
@@ -81,13 +88,18 @@ public class HandOfPoker {
 		}
 	}
 	public void compareHands(){
-		int j=-1;
+		int j=0;
 		for(int i=0; i<Players.size()-1 ;i++){
-			if(Players.get(i).Hand.getGamevalue()>Players.get(i+1).Hand.getGamevalue()){
+			if(Players.get(j).Hand.getGamevalue()>Players.get(i+1).Hand.getGamevalue()){
+				Players.get(i+1).fold();
 				j=i;
 			}
+			else{
+				Players.get(i).fold();
+				j=i+1;
+			}
 		}
-		System.out.println(Players.get(j).Name+" Wins!!");
+		System.out.println(Players.get(j).Name+" Wins!!");        
 	}
 	
 }
