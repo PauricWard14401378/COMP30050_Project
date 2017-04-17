@@ -11,7 +11,6 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 	private static final int[] AGGRESSIVE={50,60};
 	private static final int[] BLUFFER={40,60};
 	private static final int[] TAME={40,50};
-	private boolean opened=false;
 	Random rand=new Random();
 	
 	public AutomatedPokerPlayer(DeckOfCards Deck,String name) {
@@ -34,7 +33,6 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 	}
 	public void updatePercentages(){
 		if(Hand.getGamevalue()>HandOfCards.ONEPAIR&&Hand.getGamevalue()<HandOfCards.TWOPAIR){
-			System.out.println(personality[1]);
 			personality[0]+=10;
 			personality[1]+=10;
 		}
@@ -74,7 +72,6 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 	public int bet(int amount){
 		int rand1=rand.nextInt(100);
 		int scalePercentage=amount*10;
-		System.out.println(scalePercentage);
 		if(personality[1]-scalePercentage>=rand1){
 			this.removeFromBank(amount);
 		}
@@ -114,7 +111,7 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 	}
 	public boolean call(int amount){
 		int rand1=rand.nextInt(100);
-		int scalePercentage=amount*10;
+		int scalePercentage=amount*20;
 		System.out.println(personality[1]+" "+scalePercentage+" "+rand1);
 		if(personality[1]-scalePercentage>=rand1 && amount==0){
 			int openBet=Math.abs(personality[1]-rand1)/20;

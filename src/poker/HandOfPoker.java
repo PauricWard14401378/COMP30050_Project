@@ -66,9 +66,13 @@ public class HandOfPoker {
 					firstSkipped=true;
 					continue;
 				}
+				
 				if(Players.get(i).call(currentStake)){
+					if(Players.get(i).opened){
+						Players.get(i).opened=false;
+						raised=true;
+					}
 					currentStake=Players.get(i).stake;
-					raised=true;
 					if(Players.get(i).raise()){
 						currentStake++;
 						raised=true;
@@ -92,13 +96,13 @@ public class HandOfPoker {
 		for(int i=0; i<Players.size()-1 ;i++){
 			if(Players.get(j).Hand.getGamevalue()>Players.get(i+1).Hand.getGamevalue()){
 				Players.get(i+1).fold();
-				j=i;
 			}
 			else{
 				Players.get(i).fold();
 				j=i+1;
 			}
 		}
+		Players.get(j).fold();
 		System.out.println(Players.get(j).Name+" Wins!!");        
 	}
 	

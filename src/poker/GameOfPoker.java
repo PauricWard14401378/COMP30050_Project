@@ -26,6 +26,7 @@ public class GameOfPoker {
 	}
 	
 	private void initializePlayers(HumanPokerPlayer human2, ArrayList<AutomatedPokerPlayer> bots2) {
+		Players.clear();
 		Players.add(human2);
 		for(int i=0;i<bots.size();i++){
 			Players.add(bots2.get(i));
@@ -51,13 +52,14 @@ public class GameOfPoker {
 	
 	private void playGame() throws TwitterException{
 		while(!human.isBankrupt()&& bots.size()>0){
-			HandOfPoker round = new HandOfPoker(human, bots, Deck);
-			initializePlayers(human,bots);
 			for(int i=0;i<bots.size();i++){
 				if(bots.get(i).isBankrupt()){
-					bots.remove(i);
+					Players.remove(i+1);
 				}
 			}
+			Deck.reset();
+			HandOfPoker round = new HandOfPoker(human, bots, Deck);
+			initializePlayers(human,bots);
 			System.out.println("New Deal:");
 			for(int x=0;x<Players.size();x++){
 				System.out.println(Players.get(x).Name+" has "+Players.get(x).getChipCount()+" chip(s) in the bank");

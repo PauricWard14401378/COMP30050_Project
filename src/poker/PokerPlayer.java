@@ -8,6 +8,7 @@ public abstract class PokerPlayer {
 	private int Bank=DEFAULTCHIPCOUNT;
 	private boolean Bankrupt=false;
 	public boolean CanOpen;
+	public boolean opened=false;
 	public String Name;
 	public int stake=0;
 	
