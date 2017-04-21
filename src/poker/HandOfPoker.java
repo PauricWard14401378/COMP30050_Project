@@ -62,14 +62,14 @@ public class HandOfPoker {
 		do{
 			raised=false;
 			for(int i=0; i<Players.size();i++){
-				if(i==0&&firstSkipped==false){
+				System.out.println(Players.get(i).Name);
+				if(i==0 && firstSkipped==false){
 					firstSkipped=true;
+					raised=true;
 					continue;
 				}
-				
 				if(Players.get(i).call(currentStake)){
 					if(Players.get(i).opened){
-						Players.get(i).opened=false;
 						raised=true;
 					}
 					currentStake=Players.get(i).stake;
@@ -93,7 +93,7 @@ public class HandOfPoker {
 	}
 	public void compareHands(){
 		int j=0;
-		for(int i=0; i<Players.size()-1 ;i++){
+		for(int i=0; i<Players.size()-1;i++){
 			if(Players.get(j).Hand.getGamevalue()>Players.get(i+1).Hand.getGamevalue()){
 				Players.get(i+1).fold();
 			}

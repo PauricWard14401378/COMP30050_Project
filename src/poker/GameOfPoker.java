@@ -67,16 +67,19 @@ public class GameOfPoker {
 			round.dealCards();
 			//If no one can open then re-deal
 			if(!round.opening()){
+				System.out.println("No one can open the betting! Re-deal");
 				continue;
 			}
 			System.out.println("You have been dealt the following hand: \n"+human.showHand());
-			System.out.println("Which cards would you like to discard?");
+			System.out.println("Which cards would you like to discard? Enter 0 if you don't want to discard.");
 			String cards=input.nextLine();
-			Integer[] discardcards = new Integer[cards.length()];
-			for(int x=0;x<cards.length();x++){
-				discardcards[x]=Character.getNumericValue(cards.charAt(x));
+			if(!cards.contains("0")){
+				Integer[] discardcards = new Integer[cards.length()];
+				for(int x=0;x<cards.length();x++){
+					discardcards[x]=Character.getNumericValue(cards.charAt(x));
+				}
+				round.discardCards(discardcards);
 			}
-			round.discardCards(discardcards);
 			System.out.println("Your hand now looks like: \n"+human.showHand());
 			System.out.println("Would you like to fold?");
 			String fold=input.nextLine();
@@ -99,8 +102,6 @@ public class GameOfPoker {
 				round.betting(0);
 			}
 			round.compareHands();
-			
-			
 		}
 	}
 	public static void main(String[] args) throws TwitterException{

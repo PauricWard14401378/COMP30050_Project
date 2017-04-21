@@ -20,7 +20,7 @@ public class HumanPokerPlayer extends PokerPlayer{
 			throw new ArithmeticException("Unable to discard more than 3 cards");
 		}
 		for(int x=0;x<cards.length;x++){
-			Deck.returnCard(Hand.removeCard(cards[x]));
+			Deck.returnCard(Hand.removeCard(cards[x]-1));
 		}
 		//Replace the cards that were discarded
 		Hand.replaceDiscarded();

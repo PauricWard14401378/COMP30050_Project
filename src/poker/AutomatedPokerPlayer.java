@@ -128,6 +128,7 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 			return true;
 		}
 		else{
+			System.out.println(Name+" Doesn't call");
 			return false;
 		}
 
