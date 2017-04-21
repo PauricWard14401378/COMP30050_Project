@@ -13,18 +13,22 @@ public class GameOfPoker {
 	private DeckOfCards Deck;
 	private String[] BotsNames={"Tom","Dick","Harry","Sally"};
 	private ArrayList<PokerPlayer> Players=new ArrayList<PokerPlayer>();
-	TwitterAPI Twitter;
+	private Boolean GameOver=false;
+	public IO IO=new IO(0);
+	public Bank Bank=new Bank();
 	
 	
-	GameOfPoker(int numbots, DeckOfCards deck,TwitterAPI twitter) throws TwitterException{
+	GameOfPoker(int numbots, DeckOfCards deck) throws TwitterException{
+		
 		Deck=deck;
-		Twitter=twitter;
 		welcome();
 		initializebots(numbots);
+		initializePlayers(human,bots);
+		Bank.initializePlayerStacks(Players);
 		playGame();
-		
 	}
 	
+
 	private void initializePlayers(HumanPokerPlayer human2, ArrayList<AutomatedPokerPlayer> bots2) {
 		Players.clear();
 		Players.add(human2);
@@ -34,9 +38,9 @@ public class GameOfPoker {
 	}
 
 	private void welcome() {
-		System.out.println("Welcome to the Automated Poker Machine!\nWhat is your name?");
+		IO.Ouput("Welcome to the Automated Poker Machine!\nWhat is your name?");
 		String humanName=input.nextLine();
-		human= new HumanPokerPlayer(Deck,humanName);
+		human= new HumanPokerPlayer(Deck,humanName,Bank);
 		System.out.println("Let's play POKER!");
 	}
 
@@ -45,25 +49,29 @@ public class GameOfPoker {
 			throw new ArithmeticException("There has to be at least one bot and at most four. Please enter another number of bots.");
 		}
 		for(int i=0;i<numbots;i++){
-			bots.add(new AutomatedPokerPlayer(Deck, BotsNames[i]));
+			bots.add(new AutomatedPokerPlayer(Deck, BotsNames[i],Bank));
 		}
 		
 	}
 	
 	private void playGame() throws TwitterException{
-		while(!human.isBankrupt()&& bots.size()>0){
-			for(int i=0;i<bots.size();i++){
-				if(bots.get(i).isBankrupt()){
-					Players.remove(i+1);
+		while(!GameOver){//Need to define when the game is over...i.e when players lose all their chips or human decides to quit
+			//Checks if players are bankrupt
+			for(int i=0;i<Players.size();i++){
+				if(Players.get(i).isBankrupt()){
+					Players.remove(i);
 				}
 			}
+			//Resets the Deck
 			Deck.reset();
-			HandOfPoker round = new HandOfPoker(human, bots, Deck);
-			initializePlayers(human,bots);
+			//Sets up a new round of poker
+			HandOfPoker round = new HandOfPoker(human, bots, Deck, Bank);
 			System.out.println("New Deal:");
+			//Shows how many chips each player has
 			for(int x=0;x<Players.size();x++){
-				System.out.println(Players.get(x).Name+" has "+Players.get(x).getChipCount()+" chip(s) in the bank");
+				System.out.println(Players.get(x).Name+" has "+Bank.getPlayerStack(Players.get(x).Name)+" chip(s) in the bank");
 			}
+			//Deals the cards
 			round.dealCards();
 			//If no one can open then re-deal
 			if(!round.opening()){
@@ -71,9 +79,10 @@ public class GameOfPoker {
 				continue;
 			}
 			System.out.println("You have been dealt the following hand: \n"+human.showHand());
+			//Handles Discarding
 			System.out.println("Which cards would you like to discard? Enter 0 if you don't want to discard.");
 			String cards=input.nextLine();
-			if(!cards.contains("0")){
+			if(! cards.contains("0")){
 				Integer[] discardcards = new Integer[cards.length()];
 				for(int x=0;x<cards.length();x++){
 					discardcards[x]=Character.getNumericValue(cards.charAt(x));
@@ -84,7 +93,7 @@ public class GameOfPoker {
 			System.out.println("Would you like to fold?");
 			String fold=input.nextLine();
 			round.folding(fold);
-			if(human.canOpen()){
+			if(human.CanOpen&&!fold.equals("yes")){
 				System.out.println("Would you like to open the betting?");
 				String open=input.nextLine();
 				if(open.equals("yes")){
@@ -105,10 +114,9 @@ public class GameOfPoker {
 		}
 	}
 	public static void main(String[] args) throws TwitterException{
-		TwitterAPI twitter=new TwitterAPI();
 		DeckOfCards Deck=new DeckOfCards();
 		@SuppressWarnings("unused")
-		GameOfPoker game=new GameOfPoker(3,Deck,twitter);
+		GameOfPoker game=new GameOfPoker(3,Deck);
 		
 	}
 }

@@ -10,8 +10,8 @@ public class HumanPokerPlayer extends PokerPlayer{
 
 	private Scanner input=new Scanner(System.in);
 	
-	public HumanPokerPlayer(DeckOfCards deck, String name) {
-		super(deck);
+	public HumanPokerPlayer(DeckOfCards deck, String name, Bank bank) {
+		super(deck, bank);
 		Name=name;
 	}
 	public void discard(Integer[] cards){
@@ -33,7 +33,7 @@ public class HumanPokerPlayer extends PokerPlayer{
 			return 0;
 		}
 		else{
-			removeFromBank(bet);
+			Bank.removeFromBank(Name,bet);
 		}
 		return bet;
 	}
@@ -41,8 +41,8 @@ public class HumanPokerPlayer extends PokerPlayer{
 		System.out.println("Do you want to see the bet of "+Math.abs(amount-stake)+" chip(s)?");
 		String call=input.nextLine();
 		if(call.equals("yes")){
-			removeFromBank(amount);
-			stake+=amount;
+			Bank.removeFromBank(Name,amount);
+			stake=amount;
 			return true;
 		}
 		else{
@@ -54,7 +54,7 @@ public class HumanPokerPlayer extends PokerPlayer{
 		String raise=input.nextLine();
 		if(raise.equals("yes")){
 			stake+=1;
-			this.removeFromBank(1);
+			this.Bank.removeFromBank(Name, 1);
 			return true;
 		}
 		else{

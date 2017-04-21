@@ -2,19 +2,21 @@ package poker;
 
 
 public abstract class PokerPlayer {
-	private static final int DEFAULTCHIPCOUNT=10;
+
 	protected DeckOfCards Deck;
 	public HandOfCards Hand;
-	private int Bank=DEFAULTCHIPCOUNT;
-	private boolean Bankrupt=false;
+	public Bank Bank;
+	//private boolean Bankrupt=false;
 	public boolean CanOpen;
 	public boolean opened=false;
+	public boolean called=false;
 	public String Name;
-	public int stake=0;
+	public int stake=0; 
 	
 	//The PokerPlayer constructor takes as input a deck of cards and deals a hand to the poker player
-	public PokerPlayer(DeckOfCards deck){
+	public PokerPlayer(DeckOfCards deck, Bank bank){
 		Deck=deck;
+		Bank=bank;
 	}
 	
 	public void dealHand(DeckOfCards Deck){
@@ -27,14 +29,14 @@ public abstract class PokerPlayer {
 			return true;
 		}
 		else{
-			CanOpen=true;
+			CanOpen=false;
 			return false;
 		}
 	}
 	
 	public void discard(){
 	}
-	
+	/*
 	public int getChipCount(){
 		return Bank;
 	}
@@ -51,8 +53,14 @@ public abstract class PokerPlayer {
 	public void addToBank(int amount){
 		Bank+=amount;
 	}
+	*/
 	public boolean isBankrupt(){
-		return Bankrupt;
+		if(Bank.getPlayerStack(Name)==0){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 	public void fold(){
 		stake=0;

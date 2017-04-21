@@ -13,8 +13,8 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 	private static final int[] TAME={40,50};
 	Random rand=new Random();
 	
-	public AutomatedPokerPlayer(DeckOfCards Deck,String name) {
-		super(Deck);
+	public AutomatedPokerPlayer(DeckOfCards Deck,String name, Bank bank) {
+		super(Deck, bank);
 		Name=name;
 		decidePersonality();
 	}
@@ -73,10 +73,10 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		int rand1=rand.nextInt(100);
 		int scalePercentage=amount*10;
 		if(personality[1]-scalePercentage>=rand1){
-			this.removeFromBank(amount);
+			this.Bank.removeFromBank(Name,amount);
 		}
 		if(personality[0]-scalePercentage>=rand1){
-			this.removeFromBank(1);
+			this.Bank.removeFromBank(Name,1);
 			amount+=1;
 		}
 		return amount;
@@ -111,20 +111,24 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 	}
 	public boolean call(int amount){
 		int rand1=rand.nextInt(100);
-		int scalePercentage=amount*20;
-		System.out.println(personality[1]+" "+scalePercentage+" "+rand1);
+		int scalePercentage=Math.abs(amount-stake)*20;
+		//System.out.println(personality[1]+" "+(personality[1]-scalePercentage)+" "+rand1);
+		if(stake==amount && amount!=0){
+			called=true;
+			return true;
+		}
 		if(personality[1]-scalePercentage>=rand1 && amount==0){
 			int openBet=Math.abs(personality[1]-rand1)/20;
 			System.out.println(Name+" says: I open with "+ openBet+" chip(s)");
-			this.removeFromBank(openBet);
+			Bank.removeFromBank(Name, openBet);
 			stake+=openBet;
 			opened=true;
 			return true;
 		}
 		else if(personality[1]-scalePercentage>=rand1){
 			System.out.println(Name+" says: I see that "+Math.abs(amount-stake)+" chip(s)!");
-			stake+=amount;
-			this.removeFromBank(amount);
+			stake=amount;
+			Bank.removeFromBank(Name, amount);
 			return true;
 		}
 		else{
@@ -138,12 +142,15 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 			opened=false;
 			return false;
 		}
+		if(called==true){
+			return false;
+		}
 		int rand1=rand.nextInt(100);
 		System.out.println(personality[0]+" "+rand1);
 		if(personality[0]>=rand1){
 			System.out.println(Name+" says: and I raise you 1 chip(s)!");
 			stake+=1;
-			this.removeFromBank(1);
+			this.Bank.removeFromBank(Name,1);
 			return true;
 		}
 		return false;

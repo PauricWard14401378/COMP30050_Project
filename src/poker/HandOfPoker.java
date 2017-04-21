@@ -8,12 +8,14 @@ public class HandOfPoker {
 	private ArrayList<AutomatedPokerPlayer> Bots=new ArrayList<AutomatedPokerPlayer>();
 	private ArrayList<PokerPlayer> Players=new ArrayList<PokerPlayer>();
 	private DeckOfCards Deck;
+	public Bank Bank;
 	private Scanner input=new Scanner(System.in);
 	
-	HandOfPoker(HumanPokerPlayer human, ArrayList<AutomatedPokerPlayer> bots, DeckOfCards deck){
+	HandOfPoker(HumanPokerPlayer human, ArrayList<AutomatedPokerPlayer> bots, DeckOfCards deck, Bank bank){
 		Human=human;
 		Bots=bots;
 		Deck=deck;
+		Bank=bank;
 		initializePlayers(human,bots);
 		dealCards();
 	}
@@ -62,11 +64,14 @@ public class HandOfPoker {
 		do{
 			raised=false;
 			for(int i=0; i<Players.size();i++){
-				System.out.println(Players.get(i).Name);
+				System.out.println(currentStake);
 				if(i==0 && firstSkipped==false){
 					firstSkipped=true;
 					raised=true;
 					continue;
+				}
+				if(Players.size()==1){
+					break;
 				}
 				if(Players.get(i).call(currentStake)){
 					if(Players.get(i).opened){
@@ -82,19 +87,24 @@ public class HandOfPoker {
 					System.out.println(Players.get(i).Name+" says: I fold!");
 					Players.get(i).fold();
 					Players.remove(i);
+					i--;
 				}
 			}
 		}while(raised==true);
 	}
 	public void folding(String fold) {
 		if(fold.equals("yes")){
-			Human.fold();
+			Players.get(0).fold();
+			Players.remove(0);
 		}
 	}
 	public void compareHands(){
 		int j=0;
 		for(int i=0; i<Players.size()-1;i++){
+			if(i==0){System.out.println(Players.get(i).Name+" hand: "+Players.get(i).Hand);}
+			System.out.println(Players.get(i+1).Name+" hand: "+Players.get(i+1).Hand);
 			if(Players.get(j).Hand.getGamevalue()>Players.get(i+1).Hand.getGamevalue()){
+				
 				Players.get(i+1).fold();
 			}
 			else{
@@ -102,6 +112,7 @@ public class HandOfPoker {
 				j=i+1;
 			}
 		}
+		Bank.addToBank(Players.get(j).Name, Bank.Pot);
 		Players.get(j).fold();
 		System.out.println(Players.get(j).Name+" Wins!!");        
 	}
