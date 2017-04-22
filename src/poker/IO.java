@@ -23,7 +23,7 @@ public class IO {
 	}
 	public void Ouput(String output) {
 		if(i==0){
-			System.out.println(output);
+			System.out.println(outputToString(output));
 		}
 		else{
 			try {
@@ -33,5 +33,9 @@ public class IO {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public String outputToString(String output){
+		return output;
 	}
 }
