@@ -12,5 +12,10 @@
 	<classpathentry kind="lib" path="C:/Users/Oisin Gillespie/Year 3 Semester 2/COMP30050 - Software Engineering Project 3/twitter/lib/twitter4j-examples-4.0.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Oisin Gillespie/Year 3 Semester 2/COMP30050 - Software Engineering Project 3/twitter/lib/twitter4j-media-support-4.0.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Oisin Gillespie/Year 3 Semester 2/COMP30050 - Software Engineering Project 3/twitter/lib/twitter4j-stream-4.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin/Documents/Twitter4j/lib/twitter4j-async-4.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin/Documents/Twitter4j/lib/twitter4j-core-4.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin/Documents/Twitter4j/lib/twitter4j-examples-4.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin/Documents/Twitter4j/lib/twitter4j-media-support-4.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin/Documents/Twitter4j/lib/twitter4j-stream-4.0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -39,6 +39,8 @@ public class HumanPokerPlayer extends PokerPlayer{
 	}
 	public boolean call(int amount){
 		System.out.println("Do you want to see the bet of "+Math.abs(amount-stake)+" chip(s)?");
+		int amountSt = Math.abs(amount-stake);
+		System.out.println(seeBetPromptToString(amountSt));
 		String call=input.nextLine();
 		if(call.equals("yes")){
 			Bank.removeFromBank(Name,amount);
@@ -61,4 +63,10 @@ public class HumanPokerPlayer extends PokerPlayer{
 			return false;
 		}
 	}
+	
+	public String seeBetPromptToString(int amountSt){
+		return "Do you want to see the bet of "+ amountSt + " chip(s)?";
+	}
 }
+
+

@@ -132,7 +132,7 @@ public class GameOfPoker {
 	}
 
 	public String stackUpdateToString(String name, int x){
-		return name + "has" + x + "chip(s) in the bank";
+		return name + " has " + x + " chip(s) in the bank";
 	}
 	
 	public String badDealToString(){
