@@ -572,6 +572,7 @@ public class HandOfCards {
 		}
 	return false;
 	}
+	
 	//Removes the PlayingCard at index cardNumber
 	public PlayingCard removeCard(int cardNumber){
 		return Hand.remove(cardNumber);
@@ -589,18 +590,4 @@ public class HandOfCards {
 		
 	}
 	
-
-	public static void main(String[] args){
-		DeckOfCards Deck=new DeckOfCards();
-		HandOfCards Hand=new HandOfCards(Deck);
-		HandOfCards Hand2=new HandOfCards(Deck);
-		SetHand set=new SetHand(Hand,11);
-		SetHand set2=new SetHand(Hand2,12);
-		Hand.getValues();
-		Hand2.getValues();
-		System.out.println(Hand+" "+Hand.isFourOfAKind()+" "+Hand.getDiscardProbability(0)+" "+Hand.getDiscardProbability(1)+" "+Hand.getDiscardProbability(2)+" "+Hand.getDiscardProbability(3)+" "+Hand.getDiscardProbability(4)+" ");
-		System.out.println(Hand2+" "+Hand2.isStraight()+" "+Hand2.getGamevalue());
-		
-		
-	}
 }
