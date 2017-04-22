@@ -27,7 +27,7 @@ public class IO {
 		}
 		else{
 			try {
-				Twitter.updateStatus(output);
+				Twitter.updateStatus(output,0);
 			} catch (TwitterException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

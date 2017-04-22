@@ -8,6 +8,7 @@ import twitter4j.QueryResult;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.StatusListener;
+import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -17,6 +18,9 @@ import twitter4j.conf.ConfigurationBuilder;
 public class TwitterAPI{
 	public TwitterFactory tf;
 	public Twitter twitter;
+	public String User;
+	public boolean FoundPlayer=false;
+	public int NoBots=0;
 	TwitterAPI()throws TwitterException{
 		ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
@@ -31,15 +35,19 @@ public class TwitterAPI{
         
         //send a tweet
 	}
-	public void updateStatus(String string) throws TwitterException{
-		twitter.updateStatus(string);
+	public void updateStatus(String string, long MessageID) throws TwitterException{
+		StatusUpdate statusUpdate = new StatusUpdate("@"+User+" "+string);
+		statusUpdate.setInReplyToStatusId(MessageID);
+		Status status = twitter.updateStatus(statusUpdate);
+		//twitter.updateStatus("@"+User+" "+string);
 	}
-	public void searchForPlayers(){
-		Query query = new Query("#DealMeInBurnNTurn");
+	public long searchForTweets(String keyword){
+		Query query = new Query(keyword);
+		long MessageID = 0;
         int numberOfTweets = 1;
         long lastID = Long.MAX_VALUE;
         ArrayList<Status> tweets = new ArrayList<Status>();
-        while (tweets.size () < numberOfTweets) {
+        while (tweets.size() < numberOfTweets) {
           if (numberOfTweets - tweets.size() > 100)
             query.setCount(100);
           else 
@@ -47,6 +55,7 @@ public class TwitterAPI{
           try {
             QueryResult result = twitter.search(query);
             tweets.addAll(result.getTweets());
+            if(tweets.size()>0){FoundPlayer=true;}
             System.out.println("Gathered " + tweets.size() + " tweets"+"\n");
             for (Status t: tweets) 
               if(t.getId() < lastID) 
@@ -64,14 +73,28 @@ public class TwitterAPI{
 
            // GeoLocation loc = t.getGeoLocation();
 
-            String user = t.getUser().getScreenName();
+            User = t.getUser().getScreenName();
             String msg = t.getText();
+            if(msg.contains("1")){
+            	NoBots=1;
+            }
+            else if(msg.contains("2")){
+            	NoBots=2;
+            }
+            else if(msg.contains("3")){
+            	NoBots=3;
+            }
+            else if(msg.contains("4")){
+            	NoBots=4;
+            }
+            MessageID = t.getId();
             //String time = "";
             //if (loc!=null) {
               //Double lat = t.getGeoLocation().getLatitude();
               //Double lon = t.getGeoLocation().getLongitude();*/
-             System.out. println(i + " USER: " + user + " wrote: " + msg + "\n");
-            } 
+             System.out. println(i + " USER: " + User + " wrote: " + msg + "\n");
+            }
+        return MessageID;
 	}
 	/*
 	//if something goes wrong, we might see a TwitterException

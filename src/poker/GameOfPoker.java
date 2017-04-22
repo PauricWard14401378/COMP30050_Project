@@ -115,8 +115,14 @@ public class GameOfPoker {
 	}
 	public static void main(String[] args) throws TwitterException{
 		DeckOfCards Deck=new DeckOfCards();
-		@SuppressWarnings("unused")
-		GameOfPoker game=new GameOfPoker(3,Deck);
+		TwitterAPI twitter=new TwitterAPI();
+		long ID=twitter.searchForTweets("#DealMeInBurnNTurn");
+		System.out.println(ID);
+		twitter.updateStatus("Done", ID);
+		if(twitter.FoundPlayer){
+			GameOfPoker game=new GameOfPoker(twitter.NoBots,Deck);
+		}
+		
 		
 	}
 }
