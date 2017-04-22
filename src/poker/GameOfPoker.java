@@ -41,7 +41,11 @@ public class GameOfPoker {
 		IO.Ouput("Welcome to the Automated Poker Machine!\nWhat is your name?");
 		String humanName=input.nextLine();
 		human= new HumanPokerPlayer(Deck,humanName,Bank);
-		System.out.println("Let's play POKER!");
+		System.out.println(letsPlayToString());
+	}
+	
+	public String letsPlayToString(){
+		return "Let's play POKER!";
 	}
 
 	private void initializebots(int numbots){
@@ -66,21 +70,26 @@ public class GameOfPoker {
 			Deck.reset();
 			//Sets up a new round of poker
 			HandOfPoker round = new HandOfPoker(human, bots, Deck, Bank);
-			System.out.println("New Deal:");
+			System.out.println(newDealToString());
 			//Shows how many chips each player has
 			for(int x=0;x<Players.size();x++){
-				System.out.println(Players.get(x).Name+" has "+Bank.getPlayerStack(Players.get(x).Name)+" chip(s) in the bank");
+				String name = Players.get(x).Name;
+				int bank = Bank.getPlayerStack(Players.get(x).Name);
+				
+				System.out.println(stackUpdateToString(name,bank));
 			}
 			//Deals the cards
 			round.dealCards();
 			//If no one can open then re-deal
-			if(!round.opening()){
-				System.out.println("No one can open the betting! Re-deal");
+			if(!round.opening()){	
+				System.out.println(badDealToString());
 				continue;
 			}
-			System.out.println("You have been dealt the following hand: \n"+human.showHand());
+			String handSt = human.showHand();
+			System.out.println(handToString(handSt));
 			//Handles Discarding
-			System.out.println("Which cards would you like to discard? Enter 0 if you don't want to discard.");
+			
+			System.out.println(discardPromptToString());
 			String cards=input.nextLine();
 			if(! cards.contains("0")){
 				Integer[] discardcards = new Integer[cards.length()];
@@ -89,15 +98,18 @@ public class GameOfPoker {
 				}
 				round.discardCards(discardcards);
 			}
-			System.out.println("Your hand now looks like: \n"+human.showHand());
-			System.out.println("Would you like to fold?");
+			
+			String hand = human.showHand();
+			System.out.println(handUpdateToString(hand));
+			
+			System.out.println(foldPromptToString());
 			String fold=input.nextLine();
 			round.folding(fold);
 			if(human.CanOpen&&!fold.equals("yes")){
-				System.out.println("Would you like to open the betting?");
+				System.out.println(openBettingPromptToString());
 				String open=input.nextLine();
 				if(open.equals("yes")){
-					System.out.println("How much would you like to bet?");
+					System.out.println(betAmountPromptToString());
 					String betting =input.nextLine();
 					int openBet=Integer.parseInt(betting);
 					human.stake+=openBet;
@@ -113,10 +125,43 @@ public class GameOfPoker {
 			round.compareHands();
 		}
 	}
-	public static void main(String[] args) throws TwitterException{
-		DeckOfCards Deck=new DeckOfCards();
-		@SuppressWarnings("unused")
-		GameOfPoker game=new GameOfPoker(3,Deck);
-		
+	
+	
+	public String newDealToString(){
+		return "New Deal: ";
 	}
+
+	public String stackUpdateToString(String name, int x){
+		return name + "has" + x + "chip(s) in the bank";
+	}
+	
+	public String badDealToString(){
+		return "No one can open the betting! Re-deal";
+	}
+	
+	public String handToString(String hand){
+		return "You have been dealt the following hand: \n"+ hand;
+	}
+	
+	public String discardPromptToString(){
+		return "Which cards would you like to discard? Enter 0 if you don't want to discard.";
+	}
+	
+	public String handUpdateToString(String hand){
+		return "Your hand now looks like: \n"+ hand;
+	}
+	
+	public String foldPromptToString(){
+		return "Would you like to fold?";
+	}
+	
+	public String openBettingPromptToString(){
+		return "Would you like to open the betting?";
+	}
+	
+	public String betAmountPromptToString(){
+		return "How much would you like to bet?";
+	}
+	
+	
 }
