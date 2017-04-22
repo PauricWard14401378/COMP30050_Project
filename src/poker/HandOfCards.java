@@ -22,6 +22,13 @@ public class HandOfCards {
 	public static final int TWOPAIR=2000000;
 	public static final int ONEPAIR=1000000;
 	
+	public final int DEFINITEDISCARD=100;
+	public final int HIGHCHANCEKEEP = 70;
+	public final int EVENCHANCE = 50;
+	public final int LOWCHANCEKEEP = 20;
+	public final int HIGHCHANCEDISCARD = 10;
+	public final int DEFINITEKEEP=0;
+	
 	public ArrayList<PlayingCard> Hand=new ArrayList<PlayingCard>();
 	private DeckOfCards Deck;
 	private int[] card=new int[HANDSIZE];
@@ -62,7 +69,7 @@ public class HandOfCards {
 	//This method sorts the hand of cards by the game value of the cards by overriding the comparator.
 	public void sort(){
 		 Collections.sort(Hand,new Comparator<PlayingCard>(){
-		 public int compare(PlayingCard one,PlayingCard two){
+			public int compare(PlayingCard one,PlayingCard two){
 				if(one.getGameValue()>=two.getGameValue()){
 					return -1;
 				}
@@ -357,45 +364,45 @@ public class HandOfCards {
 	}
 	
 	public int getDiscardProbability(int cardPosition){
-		int discardProbability = 0;
+		int discardProbability = 0; //initializes value to 0
 		//checks for invalid input
 		if(cardPosition!=0&&cardPosition!=1&&cardPosition!=2&&cardPosition!=3&&cardPosition!=4){
-			discardProbability =0;
+			discardProbability = this.DEFINITEKEEP;
 		}
 		//checks what type of hand the hand is
 		if(isRoyalFlush()==true){
-			discardProbability =0;
+			discardProbability = this.DEFINITEKEEP;
 		}
 		else if(isStraightFlush()==true){
-			discardProbability = 0;
+			discardProbability = this.DEFINITEKEEP;
 		}
 		else if(isFourOfAKind()==true){
-			discardProbability = 0;
+			discardProbability = this.DEFINITEKEEP;
 		}
 		else if(isFullHouse()==true){
-			discardProbability=0;
+			discardProbability=this.DEFINITEKEEP;
 		}
 		else if(isFlush()==true){
-			discardProbability=0;
+			discardProbability=this.DEFINITEKEEP;
 		}
 		else if(isStraight()==true){
 			//not worth risking losing the straight to get a flush if it is a busted flush.
-			discardProbability=0;
+			discardProbability=this.DEFINITEKEEP;
 		}
 		else if(isThreeOfAKind()==true){
 			//discard low non-trip, to get full house
 			if(cardPosition==this.lowNonTrip){
-				discardProbability=100;
+				discardProbability= this.DEFINITEDISCARD;
 			}
 			//discard both some-of the time, to get 4OK
 			if(cardPosition==this.highNonTrip){
-				discardProbability=20;
+				discardProbability=this.LOWCHANCEKEEP;
 			}
 		}
 		
 		else if(isTwoPair()==true){
 			if(cardPosition==this.nonTwoPair){
-				discardProbability = 70; //high probability as lessening the hand will only lessen the kicker
+				discardProbability = this.HIGHCHANCEKEEP; //high probability as lessening the hand will only lessen the kicker
 			}
 			
 		}
@@ -404,28 +411,28 @@ public class HandOfCards {
 			//checks if it is a bustedFlush/bustedStraight
 			if(this.isBustedFlush()&&this.isBustedStraight()){
 				if((this.bustedFlushCard==this.bustedStraightCard)&&(this.bustedFlushCard==cardPosition)){
-					discardProbability = 100;
+					discardProbability = this.DEFINITEDISCARD;
 				}
 			}
 			else if(this.isBustedFlush()){
 				if(this.bustedFlushCard==cardPosition){
-					discardProbability = 100;
+					discardProbability = this.DEFINITEDISCARD;
 				}
 			}
 			else if(this.isBustedStraight()){
 				if(this.bustedStraightCard==cardPosition){
-					discardProbability = 100;
+					discardProbability = this.DEFINITEDISCARD;
 				}
 			}
 			else{
 				if(cardPosition==this.lowNonPair){
-					discardProbability = 100;
+					discardProbability = this.DEFINITEDISCARD;
 				}
 				else if(cardPosition==this.midNonPair){
-					discardProbability = 50;
+					discardProbability = this.EVENCHANCE;
 				}
 				else if(cardPosition==this.highNonPair){
-					discardProbability = 10;
+					discardProbability = this.HIGHCHANCEDISCARD;
 				}
 			}
 		}
@@ -434,30 +441,30 @@ public class HandOfCards {
 			//checks if it is a bustedFlush/bustedStraight
 			if(this.isBustedFlush()&&this.isBustedStraight()){
 				if((this.bustedFlushCard==this.bustedStraightCard)&&(this.bustedFlushCard==cardPosition)){
-					discardProbability = 100;
+					discardProbability = this.DEFINITEDISCARD;
 				}
 			}
 			else if(this.isBustedFlush()){
 				if(this.bustedFlushCard==cardPosition){
-					discardProbability = 100;
+					discardProbability = this.DEFINITEDISCARD;
 				}
 			}
 			else if(this.isBustedStraight()){
 				if(this.bustedStraightCard==cardPosition){
-					discardProbability = 100;
+					discardProbability = this.DEFINITEDISCARD;
 				}
 			}
 			else{//discard worst card, and 2nd worst some of the time
 				if(cardPosition==4){
-					discardProbability = 100;
+					discardProbability = this.DEFINITEDISCARD;
 					return discardProbability;
 				}
 				else if(cardPosition==3){
-					discardProbability = 50;
+					discardProbability = this.EVENCHANCE;
 					return discardProbability;
 				}
 				else if(cardPosition==2){
-					discardProbability = 10;
+					discardProbability = this.HIGHCHANCEDISCARD;
 					return discardProbability;
 				}
 			}		
