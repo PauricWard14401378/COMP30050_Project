@@ -28,8 +28,15 @@ public class TwitterAPI{
 
         //access the twitter API using your twitter4j.properties file
         twitter = tf.getInstance();
-        Query query = new Query("#world");
-        int numberOfTweets = 5;
+        
+        //send a tweet
+	}
+	public void updateStatus(String string) throws TwitterException{
+		twitter.updateStatus(string);
+	}
+	public void searchForPlayers(){
+		Query query = new Query("#DealMeInBurnNTurn");
+        int numberOfTweets = 1;
         long lastID = Long.MAX_VALUE;
         ArrayList<Status> tweets = new ArrayList<Status>();
         while (tweets.size () < numberOfTweets) {
@@ -65,10 +72,6 @@ public class TwitterAPI{
               //Double lon = t.getGeoLocation().getLongitude();*/
              System.out. println(i + " USER: " + user + " wrote: " + msg + "\n");
             } 
-        //send a tweet
-	}
-	public void updateStatus(String string) throws TwitterException{
-		twitter.updateStatus(string);
 	}
 	/*
 	//if something goes wrong, we might see a TwitterException
