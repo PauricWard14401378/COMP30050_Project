@@ -19,6 +19,19 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		decidePersonality();
 	}
 	private void decidePersonality() {
+		if(Name.equals("Tom")){
+			personality=NERVOUS;
+		}
+		else if(Name.equals("Dick")){
+			personality=AGGRESSIVE;
+		}
+		else if(Name.equals("Harry")){
+			personality=BLUFFER;
+		}
+		else if(Name.equals("Sally")){
+			personality=TAME;
+		}
+		/*
 		int rand1=rand.nextInt(4);
 		switch(rand1){
 		case 0: personality=NERVOUS;
@@ -30,6 +43,7 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		case 3: personality=TAME;
 				break;
 		}
+		*/
 	}
 	public void updatePercentages(){
 		if(Hand.getGamevalue()>HandOfCards.ONEPAIR&&Hand.getGamevalue()<HandOfCards.TWOPAIR){
@@ -119,6 +133,9 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		}
 		if(personality[1]-scalePercentage>=rand1 && amount==0){
 			int openBet=Math.abs(personality[1]-rand1)/20;
+			if(openBet==0){
+				return false;
+			}
 			System.out.println(Name+" says: I open with "+ openBet+" chip(s)");
 			Bank.removeFromBank(Name, openBet);
 			stake+=openBet;

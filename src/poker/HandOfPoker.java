@@ -64,7 +64,6 @@ public class HandOfPoker {
 		do{
 			raised=false;
 			for(int i=0; i<Players.size();i++){
-				System.out.println(currentStake);
 				if(i==0 && firstSkipped==false){
 					firstSkipped=true;
 					raised=true;

@@ -14,18 +14,18 @@ public class GameOfPoker {
 	private String[] BotsNames={"Tom","Dick","Harry","Sally"};
 	private ArrayList<PokerPlayer> Players=new ArrayList<PokerPlayer>();
 	private Boolean GameOver=false;
-	public IO IO=new IO(0);
+	public IO IO;
 	public Bank Bank=new Bank();
 	
 	
-	GameOfPoker(int numbots, DeckOfCards deck) throws TwitterException{
-		
+	GameOfPoker(int numbots, DeckOfCards deck, IO io) throws TwitterException{
+		IO=io;
 		Deck=deck;
 		welcome();
 		initializebots(numbots);
 		initializePlayers(human,bots);
 		Bank.initializePlayerStacks(Players);
-		playGame();
+		//playGame();
 	}
 	
 
@@ -37,11 +37,13 @@ public class GameOfPoker {
 		}
 	}
 
-	private void welcome() {
-		IO.Ouput("Welcome to the Automated Poker Machine!\nWhat is your name?");
-		String humanName=input.nextLine();
+	private void welcome(){
+		IO.Output("Welcome to the Automated Poker Machine!\nWhat is your name?");
+		String humanName="";
+		humanName=IO.input();
+		//String humanName=IO.input();
 		human= new HumanPokerPlayer(Deck,humanName,Bank);
-		System.out.println(letsPlayToString());
+		IO.Output(letsPlayToString());
 	}
 	
 	public String letsPlayToString(){
@@ -70,27 +72,27 @@ public class GameOfPoker {
 			Deck.reset();
 			//Sets up a new round of poker
 			HandOfPoker round = new HandOfPoker(human, bots, Deck, Bank);
-			System.out.println(newDealToString1());
+			IO.Output(newDealToString1());
 			//Shows how many chips each player has
 			for(int x=0;x<Players.size();x++){
 				String name = Players.get(x).Name;
 				int bank = Bank.getPlayerStack(Players.get(x).Name);
 				
-				System.out.println(stackUpdateToString1(name,bank));
+				IO.Output(stackUpdateToString1(name,bank));
 			}
 			//Deals the cards
 			round.dealCards();
 			//If no one can open then re-deal
 			if(!round.opening()){	
-				System.out.println(badDealToString1());
+				IO.Output(badDealToString1());
 				continue;
 			}
 			String handSt = human.showHand();
-			System.out.println(handToString1(handSt));
+			IO.Output(handToString1(handSt));
 			//Handles Discarding
 			
-			System.out.println(discardPromptToString1());
-			String cards=input.nextLine();
+			IO.Output(discardPromptToString1());
+			String cards=IO.input();
 			if(! cards.contains("0")){
 				Integer[] discardcards = new Integer[cards.length()];
 				for(int x=0;x<cards.length();x++){
@@ -100,17 +102,16 @@ public class GameOfPoker {
 			}
 			
 			String hand = human.showHand();
-			System.out.println(handUpdateToString1(hand));
-			
-			System.out.println(foldPromptToString1());
-			String fold=input.nextLine();
+			IO.Output(handUpdateToString1(hand));
+			IO.Output(foldPromptToString1());
+			String fold=IO.input();
 			round.folding(fold);
 			if(human.CanOpen&&!fold.equals("yes")){
-				System.out.println(openBettingPromptToString1());
-				String open=input.nextLine();
+				IO.Output(openBettingPromptToString1());
+				String open=IO.input();
 				if(open.equals("yes")){
-					System.out.println(betAmountPromptToString1());
-					String betting =input.nextLine();
+					IO.Output(betAmountPromptToString1());
+					String betting =IO.input();
 					int openBet=Integer.parseInt(betting);
 					human.stake+=openBet;
 					round.betting(openBet); 

@@ -27,7 +27,6 @@ public class Bank {
 		playerStacks.put(name, amount);
 	}
 	public int getPlayerStack(String name){
-		System.out.println(playerStacks.get(name));
 		return playerStacks.get(name);
 	}
 }

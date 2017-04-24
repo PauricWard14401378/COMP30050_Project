@@ -38,7 +38,6 @@ public class HumanPokerPlayer extends PokerPlayer{
 		return bet;
 	}
 	public boolean call(int amount){
-		System.out.println("Do you want to see the bet of "+Math.abs(amount-stake)+" chip(s)?");
 		int amountSt = Math.abs(amount-stake);
 		System.out.println(seeBetPromptToString(amountSt));
 		String call=input.nextLine();
