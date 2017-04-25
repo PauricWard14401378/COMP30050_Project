@@ -5,7 +5,6 @@ import java.util.Random;
 public class AutomatedPokerPlayer extends PokerPlayer{
 	public int[] personality;
 	//Will play with type of hand, bet size depending on hand, 
-	//I added 30 to each value to make them more aggressive for testing
 	
 	private static final int[] NERVOUS={30,40};
 	private static final int[] AGGRESSIVE={50,60};
@@ -31,19 +30,6 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		else if(Name.equals("Sally")){
 			personality=TAME;
 		}
-		/*
-		int rand1=rand.nextInt(4);
-		switch(rand1){
-		case 0: personality=NERVOUS;
-				break;
-		case 1: personality=AGGRESSIVE;
-				break;
-		case 2: personality=BLUFFER;
-				break;
-		case 3: personality=TAME;
-				break;
-		}
-		*/
 	}
 	public void updatePercentages(){
 		if(Hand.getGamevalue()>HandOfCards.ONEPAIR&&Hand.getGamevalue()<HandOfCards.TWOPAIR){
@@ -83,18 +69,7 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		}
 
 	}
-	public int bet(int amount){
-		int rand1=rand.nextInt(100);
-		int scalePercentage=amount*10;
-		if(personality[1]-scalePercentage>=rand1){
-			this.Bank.removeFromBank(Name,amount);
-		}
-		if(personality[0]-scalePercentage>=rand1){
-			this.Bank.removeFromBank(Name,1);
-			amount+=1;
-		}
-		return amount;
-	}
+	
 	public void discard(){
 		
 		int rand1, cardsDiscarded=0;
@@ -126,30 +101,29 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 	public boolean call(int amount){
 		int rand1=rand.nextInt(100);
 		int scalePercentage=Math.abs(amount-stake)*20;
-		//System.out.println(personality[1]+" "+(personality[1]-scalePercentage)+" "+rand1);
+		int stackPercentage=stake/(Bank.getPlayerStack(Name)+stake)*100;
 		if(stake==amount && amount!=0){
 			called=true;
 			return true;
 		}
-		if(personality[1]-scalePercentage>=rand1 && amount==0){
+		if(personality[1]-scalePercentage-stackPercentage>=rand1 && amount==0){
 			int openBet=Math.abs(personality[1]-rand1)/20;
 			if(openBet==0){
 				return false;
 			}
-			System.out.println(Name+" says: I open with "+ openBet+" chip(s)");
+			GameOfPoker.IO.Output(Name+" says: I open with "+ openBet+" chip(s)");
 			Bank.removeFromBank(Name, openBet);
 			stake+=openBet;
 			opened=true;
 			return true;
 		}
-		else if(personality[1]-scalePercentage>=rand1){
-			System.out.println(Name+" says: I see that "+Math.abs(amount-stake)+" chip(s)!");
+		else if(personality[1]-scalePercentage-stackPercentage>=rand1){
+			GameOfPoker.IO.Output(Name+" says: I see that "+Math.abs(amount-stake)+" chip(s)!");
 			stake=amount;
 			Bank.removeFromBank(Name, amount);
 			return true;
 		}
 		else{
-			System.out.println(Name+" Doesn't call");
 			return false;
 		}
 
@@ -163,9 +137,8 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 			return false;
 		}
 		int rand1=rand.nextInt(100);
-		System.out.println(personality[0]+" "+rand1);
 		if(personality[0]>=rand1){
-			System.out.println(Name+" says: and I raise you 1 chip(s)!");
+			GameOfPoker.IO.Output(Name+" says: and I raise you 1 chip(s)!");
 			stake+=1;
 			this.Bank.removeFromBank(Name,1);
 			return true;

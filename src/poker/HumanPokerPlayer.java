@@ -2,18 +2,15 @@ package poker;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Scanner;
 
 
 public class HumanPokerPlayer extends PokerPlayer{
-	
-
-	private Scanner input=new Scanner(System.in);
 	
 	public HumanPokerPlayer(DeckOfCards deck, String name, Bank bank) {
 		super(deck, bank);
 		Name=name;
 	}
+	
 	public void discard(Integer[] cards){
 		Arrays.sort(cards,Collections.reverseOrder());
 		if(cards.length>3){
@@ -28,19 +25,11 @@ public class HumanPokerPlayer extends PokerPlayer{
 		Hand.sort();	
 	}
 
-	public int bet(int bet){
-		if(bet==0){
-			return 0;
-		}
-		else{
-			Bank.removeFromBank(Name,bet);
-		}
-		return bet;
-	}
+	
 	public boolean call(int amount){
 		int amountSt = Math.abs(amount-stake);
-		System.out.println(seeBetPromptToString(amountSt));
-		String call=input.nextLine();
+		GameOfPoker.IO.Output(seeBetPromptToString(amountSt));
+		String call=GameOfPoker.IO.input();
 		if(call.equals("yes")){
 			Bank.removeFromBank(Name,amount);
 			stake=amount;
@@ -51,8 +40,8 @@ public class HumanPokerPlayer extends PokerPlayer{
 		}
 	}
 	public boolean raise(){
-		System.out.println("Do you want to raise the bet by 1 chip?");
-		String raise=input.nextLine();
+		GameOfPoker.IO.Output("Do you want to raise the bet by 1 chip?");
+		String raise=GameOfPoker.IO.input();
 		if(raise.equals("yes")){
 			stake+=1;
 			this.Bank.removeFromBank(Name, 1);

@@ -5,7 +5,7 @@ public abstract class PokerPlayer {
 
 	protected DeckOfCards Deck;
 	public HandOfCards Hand;
-	public Bank Bank;
+	protected Bank Bank;
 	//private boolean Bankrupt=false;
 	public boolean CanOpen;
 	public boolean opened=false;
@@ -22,6 +22,7 @@ public abstract class PokerPlayer {
 	public void dealHand(DeckOfCards Deck){
 		Hand = new HandOfCards(Deck);
 	}
+	
 	//This method Discards cards back to the deck and receives card from the deck to replace them
 	public boolean canOpen(){
 		if(Hand.getGamevalue()>=HandOfCards.ONEPAIR){
@@ -35,25 +36,9 @@ public abstract class PokerPlayer {
 	}
 	
 	public void discard(){
+		
 	}
-	/*
-	public int getChipCount(){
-		return Bank;
-	}
-	public int removeFromBank(int amount){
-		if(amount>Bank){
-			throw new ArithmeticException("Unable to remove that amount from your bank.");
-		}
-		Bank-=amount;
-		if(Bank<=0){
-			Bankrupt=true;
-		}
-		return amount;
-	}
-	public void addToBank(int amount){
-		Bank+=amount;
-	}
-	*/
+	
 	public boolean isBankrupt(){
 		if(Bank.getPlayerStack(Name)==0){
 			return true;
@@ -70,10 +55,6 @@ public abstract class PokerPlayer {
 	}
 	public String showHand(){
 		return Hand.toString();
-	}
-	public int bet(int amount){
-		return amount;
-		
 	}
 	public boolean call(int amount){
 		return true;

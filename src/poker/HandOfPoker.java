@@ -1,15 +1,13 @@
 package poker;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class HandOfPoker {
 	private HumanPokerPlayer Human;
 	private ArrayList<AutomatedPokerPlayer> Bots=new ArrayList<AutomatedPokerPlayer>();
 	private ArrayList<PokerPlayer> Players=new ArrayList<PokerPlayer>();
 	private DeckOfCards Deck;
-	public Bank Bank;
-	private Scanner input=new Scanner(System.in);
+	private Bank Bank;
 	
 	HandOfPoker(HumanPokerPlayer human, ArrayList<AutomatedPokerPlayer> bots, DeckOfCards deck, Bank bank){
 		Human=human;
@@ -42,11 +40,11 @@ public class HandOfPoker {
 		boolean canOpen=false;
 		for(int i=0;i<Players.size();i++){
 			if(Players.get(i).canOpen()){
-				System.out.println(Players.get(i).Name+" says: I can open");
+				GameOfPoker.IO.Output(Players.get(i).Name+" says: I can open");
 				canOpen=true;
 			}
 			else{
-				System.out.println(Players.get(i).Name+" says: I cannot open");
+				GameOfPoker.IO.Output(Players.get(i).Name+" says: I cannot open");
 			}
 		}
 		return canOpen;
@@ -83,7 +81,7 @@ public class HandOfPoker {
 					}
 				}
 				else{
-					System.out.println(Players.get(i).Name+" says: I fold!");
+					GameOfPoker.IO.Output(Players.get(i).Name+" says: I fold!");
 					Players.get(i).fold();
 					Players.remove(i);
 					i--;
@@ -100,8 +98,8 @@ public class HandOfPoker {
 	public void compareHands(){
 		int j=0;
 		for(int i=0; i<Players.size()-1;i++){
-			if(i==0){System.out.println(Players.get(i).Name+" hand: "+Players.get(i).Hand);}
-			System.out.println(Players.get(i+1).Name+" hand: "+Players.get(i+1).Hand);
+			if(i==0){GameOfPoker.IO.Output(Players.get(i).Name+" hand: "+Players.get(i).Hand);}
+			GameOfPoker.IO.Output(Players.get(i+1).Name+" hand: "+Players.get(i+1).Hand);
 			if(Players.get(j).Hand.getGamevalue()>Players.get(i+1).Hand.getGamevalue()){
 				
 				Players.get(i+1).fold();
@@ -111,9 +109,10 @@ public class HandOfPoker {
 				j=i+1;
 			}
 		}
-		Bank.addToBank(Players.get(j).Name, Bank.Pot);
+		Bank.addToBank(Players.get(j).Name, Bank.getPot());
+		Bank.resetPot();
 		Players.get(j).fold();
-		System.out.println(Players.get(j).Name+" Wins!!");        
+		GameOfPoker.IO.Output(Players.get(j).Name+" Wins!!");        
 	}
 	
 }

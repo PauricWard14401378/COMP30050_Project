@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class Bank {
 	private static final int BANKTOTAL= 50;
 	private ArrayList<PokerPlayer> Players;
-	public int Pot=0;
+	private int Pot=0;
 	public HashMap<String,Integer> playerStacks=new HashMap<String,Integer>();
 	Bank(){
 		
@@ -28,5 +28,11 @@ public class Bank {
 	}
 	public int getPlayerStack(String name){
 		return playerStacks.get(name);
+	}
+	public int getPot(){
+		return Pot;
+	}
+	public void resetPot(){
+		Pot=0;
 	}
 }

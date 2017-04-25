@@ -1,21 +1,18 @@
 package poker;
 
 import java.util.ArrayList;
-import java.util.Scanner;
-
 import twitter4j.TwitterException;
 
 public class GameOfPoker {
 	//Need both a bots arraylist and a humanpokerplayer because you need to distinguish between both human and bot
 	private ArrayList<AutomatedPokerPlayer> bots=new ArrayList<AutomatedPokerPlayer>();
-	private Scanner input=new Scanner(System.in);
 	private HumanPokerPlayer human;
 	private DeckOfCards Deck;
 	private String[] BotsNames={"Tom","Dick","Harry","Sally"};
 	private ArrayList<PokerPlayer> Players=new ArrayList<PokerPlayer>();
 	private Boolean GameOver=false;
-	public IO IO;
-	public Bank Bank=new Bank();
+	public static IO IO;
+	private Bank Bank=new Bank();
 	
 	
 	GameOfPoker(int numbots, DeckOfCards deck, IO io) throws TwitterException{
@@ -25,7 +22,7 @@ public class GameOfPoker {
 		initializebots(numbots);
 		initializePlayers(human,bots);
 		Bank.initializePlayerStacks(Players);
-		//playGame();
+		playGame();
 	}
 	
 
