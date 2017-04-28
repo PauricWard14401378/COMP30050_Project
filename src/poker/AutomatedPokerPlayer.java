@@ -74,7 +74,7 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		
 		int rand1, cardsDiscarded=0;
 		//Cycles through the hand and decides whether to discard the card or not
-		for(int x=0;x<HandOfCards.HANDSIZE;x++){
+		for(int x=HandOfCards.HANDSIZE-1;x<0;x--){
 			//The max number of cards that can be returned is 3
 			if(cardsDiscarded==3){
 				continue;

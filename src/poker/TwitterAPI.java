@@ -11,12 +11,13 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterAPI{
 	private TwitterFactory tf;
 	public Twitter twitter;
-	private TwitterStream twitterStream;
+	public TwitterStream twitterStream;
 	public String User;
 	public boolean FoundPlayer=false;
 	public int NoBots=0;
@@ -24,13 +25,16 @@ public class TwitterAPI{
 	public static final int MAXCHARSIZE =140;
 	private StatusListener listener = new StatusListener() {
         public void onStatus(Status status) {
-            User=status.getUser().getScreenName();
-            InputMessage=status.getText();
-            if(NoBots==0){
-            	NoBots=Integer.parseInt(InputMessage.substring(19));
-            }
-            FoundPlayer=true;
-            notifyListener();
+        	if(!status.getText().contains("#DealMeInBurnNTurn")&&!status.getText().contains("#DealMeOutBurnNTurn")){
+            	if(Main.Games.containsKey(status.getUser().getScreenName())){
+    	        	User=status.getUser().getScreenName();
+    	        	FoundPlayer=true;
+    	        	InputMessage=status.getText();
+    	            notifyListener();
+    	            Main.Games.get(User).notifyGame();
+            	}
+        	}
+
         }
 
         public void onTrackLimitationNotice(int numberOfLimitedStatuses) {
@@ -66,34 +70,29 @@ public class TwitterAPI{
                 .setOAuthConsumerSecret("33oV5lmu2oIh4yLmQJMCQIA6Eah92qOkZetY2FgsCKfwdSVY3R")
                 .setOAuthAccessToken("856603703188615168-9Ob6mcxFWSyAtTyZbigsx7iKhhDGRQX")
                 .setOAuthAccessTokenSecret("nbBnbUfM7lK2Wc4Y1Cl2oDLhOelg3o1H3ASskt9w4xg6o");
-        tf = new TwitterFactory(cb.build());
-        ConfigurationBuilder cb2 = new ConfigurationBuilder();
-        cb2.setDebugEnabled(true)
-		        .setOAuthConsumerKey("SAxG0CB9pUJOqUS0DRl96Y1gh")
-		        .setOAuthConsumerSecret("33oV5lmu2oIh4yLmQJMCQIA6Eah92qOkZetY2FgsCKfwdSVY3R")
-		        .setOAuthAccessToken("856603703188615168-9Ob6mcxFWSyAtTyZbigsx7iKhhDGRQX")
-		        .setOAuthAccessTokenSecret("nbBnbUfM7lK2Wc4Y1Cl2oDLhOelg3o1H3ASskt9w4xg6o");
-        //access the twitter API using your twitter4j.properties file
+        Configuration c=cb.build();
+        tf = new TwitterFactory(c);
         twitter = tf.getInstance();
-        twitterStream= new TwitterStreamFactory(cb2.build()).getInstance();
+        twitterStream= new TwitterStreamFactory(c).getInstance();
 	}
 	
 	public void updateStatus(String string) throws TwitterException{
 		StatusUpdate statusUpdate = new StatusUpdate("@"+User+" "+string);
+		System.out.println("@"+User+" "+string);
 		twitter.updateStatus(statusUpdate);
 	}
 	
-	private synchronized void notifyListener(){
-		notifyAll();
+	public synchronized void notifyListener(){
+		notify();
 	}
 	
 	public synchronized void startListener() {
 		System.out.println("Starting Listener");
 	    FilterQuery fq = new FilterQuery();
-	    String keywords[] = {"#DealMeInBurnNTurn","@BurnAndTurn173"};
+	    String keywords[] = {"#DealMeInBurnNTurn","@BurnAndTurn173","#DealMeOutBurnNTurn"};
 	    fq.track(keywords);
 	    twitterStream.addListener(listener);
-	    twitterStream.filter(fq);  
+	    twitterStream.filter(fq); 
 	    try {
 			wait();
 		} catch (InterruptedException e) {
@@ -101,13 +100,14 @@ public class TwitterAPI{
 		}
 	}
 	
-	public synchronized String getinput(){
-		try {
-			wait();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	public String getinput() {
 		return InputMessage.substring(16);
+	}
+	public String getUser(){
+		return User;
+	}
+	public void setUser(String user){
+		User=user;
 	}
 }
 

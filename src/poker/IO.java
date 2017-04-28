@@ -1,6 +1,9 @@
 package poker;
 
+import java.util.HashMap;
 import java.util.Scanner;
+
+import twitter4j.StatusListener;
 import twitter4j.TwitterException;
 
 public class IO {
@@ -8,9 +11,9 @@ public class IO {
 	private String Output="";
 	Scanner input=new Scanner(System.in);
 	TwitterAPI Twitter=new TwitterAPI();
+	HashMap<String, String> UserOutput=new HashMap<String,String>();
 	
-	
-	IO(int j)throws TwitterException {
+	IO(int j) {
 		i=j;
 	}
 	
@@ -19,15 +22,6 @@ public class IO {
 			return input.nextLine();
 		}
 		else{
-			if(!Output.isEmpty()){
-				try {
-					Twitter.updateStatus(Output);
-				} catch (TwitterException e) {
-					e.printStackTrace();
-				}
-				Output="";
-			}
-			
 			return Twitter.getinput();
 				
 		}
@@ -37,16 +31,30 @@ public class IO {
 			System.out.println(outputToString(output));
 		}
 		else{
-			if((Output.length()+output.length()+Twitter.User.length())< TwitterAPI.MAXCHARSIZE-5){
-				Output+="\n"+output;
+			if((UserOutput.get(getUser()).length()+output.length()+Twitter.User.length())< TwitterAPI.MAXCHARSIZE-10){
+				String add=UserOutput.get(getUser());
+				add+="\n"+output;
+				UserOutput.put(getUser(), add);
+				
 			}
 			else{
 				try {
-					Twitter.updateStatus(Output);
+					Twitter.updateStatus(UserOutput.get(getUser()));
+					UserOutput.put(getUser(), "");
 				} catch (TwitterException e) {
 					e.printStackTrace();
 				}
-				Output=output;
+			}
+		}
+	}
+	public void tweetRemainingOutput(){
+		System.out.println(UserOutput.get(getUser()));
+		if(!UserOutput.get(getUser()).isEmpty()){
+			try {
+				Twitter.updateStatus(UserOutput.get(getUser()));
+				UserOutput.put(getUser(), "");
+			} catch (TwitterException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -62,5 +70,18 @@ public class IO {
 	}
 	public int noBots(){
 		return Twitter.NoBots;
+	}
+	public String getUser(){
+		return Twitter.getUser();
+	}
+	public void addListener(StatusListener h){
+		Twitter.twitterStream.addListener(h);
+	}
+	public void notifyListener(){
+		Twitter.notifyListener();
+	}
+	public void setUser(String user){
+		UserOutput.put(user, Output);
+		Twitter.setUser(user);
 	}
 }
