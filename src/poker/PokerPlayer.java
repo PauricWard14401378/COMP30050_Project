@@ -12,6 +12,7 @@ public abstract class PokerPlayer {
 	public boolean called=false;
 	public String Name;
 	public int stake=0; 
+	public boolean AllIn=false;
 	
 	//The PokerPlayer constructor takes as input a deck of cards and deals a hand to the poker player
 	public PokerPlayer(DeckOfCards deck, Bank bank){

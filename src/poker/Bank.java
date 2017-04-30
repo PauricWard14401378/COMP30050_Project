@@ -23,7 +23,7 @@ public class Bank {
 	}
 	public void removeFromBank(String name, int amount){
 		Pot+=amount;
-		amount=Math.abs(amount-playerStacks.get(name));
+		amount=playerStacks.get(name)-amount;
 		playerStacks.put(name, amount);
 	}
 	public int getPlayerStack(String name){

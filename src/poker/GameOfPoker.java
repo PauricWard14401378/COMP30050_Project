@@ -8,7 +8,7 @@ public class GameOfPoker extends Thread{
 	//Need both a bots arraylist and a humanpokerplayer because you need to distinguish between both human and bot
 	private ArrayList<AutomatedPokerPlayer> bots=new ArrayList<AutomatedPokerPlayer>();
 	private HumanPokerPlayer human;
-	private DeckOfCards Deck;
+	public DeckOfCards Deck;
 	private String[] BotsNames={"Tom","Dick","Harry","Sally"};
 	private ArrayList<PokerPlayer> Players=new ArrayList<PokerPlayer>();
 	private Boolean GameOver=false;
@@ -26,15 +26,14 @@ public class GameOfPoker extends Thread{
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		welcome();
 		initializebots(NoBots);
 		initializePlayers(human,bots);
 		Bank.initializePlayerStacks(Players);
+
 		try {
 			playGame();
 		} catch (TwitterException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -79,6 +78,7 @@ public class GameOfPoker extends Thread{
 			}
 			//Resets the Deck
 			Deck.reset();
+			
 			//Sets up a new round of poker
 			HandOfPoker round = new HandOfPoker(human, bots, Deck, Bank);
 			IO.Output(newDealToString1());
@@ -88,8 +88,6 @@ public class GameOfPoker extends Thread{
 				int bank = Bank.getPlayerStack(name);
 				IO.Output(stackUpdateToString1(name,bank));
 			}
-			//Deals the cards
-			round.dealCards();
 			//If no one can open then re-deal
 			if(!round.opening()){	
 				IO.Output(badDealToString1());
@@ -114,18 +112,30 @@ public class GameOfPoker extends Thread{
 			
 			String hand = human.showHand();
 			IO.Output(handUpdateToString1(hand));
-			IO.Output(foldPromptToString1());
-			String fold=getInput();
+			String fold;
+			do{
+				IO.Output(foldPromptToString1());
+				fold=getInput();
+			}while(!(fold.equalsIgnoreCase("y")||fold.equalsIgnoreCase("n")||fold.equalsIgnoreCase("yes")||fold.equalsIgnoreCase("no")));
 			round.folding(fold);
-			if(human.CanOpen&&!fold.equals("yes")){
+			if(human.CanOpen&&(!fold.equalsIgnoreCase("yes")||!fold.equalsIgnoreCase("y"))){
 				IO.Output(openBettingPromptToString1());
-				String open=getInput();
-				if(open.equals("yes")){
-					IO.Output(betAmountPromptToString1());
-					String betting =getInput();
-					int openBet=Integer.parseInt(betting);
-					human.stake+=openBet;
-					round.betting(openBet); 
+				String open;
+				do{
+					open=getInput();
+				}while(!(open.equalsIgnoreCase("y")||open.equalsIgnoreCase("n")||open.equalsIgnoreCase("yes")||open.equalsIgnoreCase("no")));
+				if(open.equalsIgnoreCase("yes")||open.equalsIgnoreCase("y")){
+					int humanStack=Bank.getPlayerStack(human.Name);
+					String betting;
+					int openBet;
+					do{
+						IO.Output(betAmountPromptToString1(humanStack));
+						betting =getInput();
+						betting=betting.replaceAll("[^\\d]", "");
+						openBet=Integer.parseInt(betting);
+					}while(openBet>humanStack||openBet<1);
+						human.stake+=openBet;
+						round.betting(openBet); 
 				}
 				else{
 					round.betting(0);
@@ -151,7 +161,6 @@ public class GameOfPoker extends Thread{
 					System.out.println("Before");
 					wait();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				InputString=IO.input();
@@ -212,12 +221,9 @@ public class GameOfPoker extends Thread{
 		return "Would you like to open the betting?";
 	}
 	
-	public String betAmountPromptToString1(){
-		return "How much would you like to bet?";
+	public String betAmountPromptToString1(int humanStack){
+		return "How much would you like to bet? Enter a value greater than 0 and less than "+humanStack;
 	}
-	
-	
-	
 	public String handToString(String hand){
 		return "You have been dealt the following hand: \n"+ hand;
 	}

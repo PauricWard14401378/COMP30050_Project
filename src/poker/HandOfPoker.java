@@ -8,6 +8,7 @@ public class HandOfPoker {
 	private ArrayList<PokerPlayer> Players=new ArrayList<PokerPlayer>();
 	private DeckOfCards Deck;
 	private Bank Bank;
+	private Boolean PlayerAllIn=false;
 	
 	HandOfPoker(HumanPokerPlayer human, ArrayList<AutomatedPokerPlayer> bots, DeckOfCards deck, Bank bank){
 		Human=human;
@@ -71,11 +72,14 @@ public class HandOfPoker {
 					break;
 				}
 				if(Players.get(i).call(currentStake)){
+					if(Players.get(i).AllIn){
+						PlayerAllIn=true;
+					}
 					if(Players.get(i).opened){
 						raised=true;
 					}
 					currentStake=Players.get(i).stake;
-					if(Players.get(i).raise()){
+					if(Players.get(i).raise()&&!PlayerAllIn){
 						currentStake++;
 						raised=true;
 					}
@@ -90,7 +94,7 @@ public class HandOfPoker {
 		}while(raised==true);
 	}
 	public void folding(String fold) {
-		if(fold.equals("yes")){
+		if(fold.equalsIgnoreCase("yes")||fold.equalsIgnoreCase("y")){
 			Players.get(0).fold();
 			Players.remove(0);
 		}
@@ -109,6 +113,7 @@ public class HandOfPoker {
 				j=i+1;
 			}
 		}
+		System.out.println(Bank.getPot());
 		Bank.addToBank(Players.get(j).Name, Bank.getPot());
 		Bank.resetPot();
 		Players.get(j).fold();

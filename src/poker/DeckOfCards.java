@@ -86,33 +86,4 @@ public class DeckOfCards {
 	public synchronized void returnCard(PlayingCard discarded){
 		Deck.add(discarded);
 	}
-	
-	
-	//The main method here creates an instance of DeckOfCards and deals some of the cards.
-	//1 in every 4 cards dealt is then returned to the deck. Eventually the deck runs out of
-	//Available cards and cannot deal any more. The deck is also printed at the end to show that
-	//The deck only contains returned cards.
-	public static void main(String[] args){
-		DeckOfCards deckOfCards=new DeckOfCards();
-		int maxPlus1=(deckOfCards.numCards+1);
-		
-		//Printing the deck to the console.
-		System.out.println(deckOfCards.Deck.toString()+"\n");
-		for(int x=0;x<maxPlus1;x++){
-			PlayingCard temp=deckOfCards.dealNext();
-			
-			if(temp==null){
-				System.out.println("\n"+deckOfCards.Deck.toString()+"\nThe Deck only contains returned cards therefore another card cannot be dealt. Deck size is: "+deckOfCards.Deck.size());
-			}
-			else if(x%4==0){
-				deckOfCards.returnCard(temp);
-				System.out.println("Dealt and returned card: "+temp.toString()+" Deck Size is: "+deckOfCards.Deck.size());
-			}
-			else{
-				System.out.println("Dealt card: "+temp.toString()+"	Deck Size is: "+deckOfCards.Deck.size());
-				
-			}
-		}
-		
-	}
 }

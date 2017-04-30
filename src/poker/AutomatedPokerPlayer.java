@@ -99,6 +99,7 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		updatePercentages();
 	}
 	public boolean call(int amount){
+		int amountSt=Math.abs(amount-stake);
 		int rand1=rand.nextInt(100);
 		int scalePercentage=Math.abs(amount-stake)*20;
 		int stackPercentage=stake/(Bank.getPlayerStack(Name)+stake)*100;
@@ -120,7 +121,7 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		else if(personality[1]-scalePercentage-stackPercentage>=rand1){
 			GameOfPoker.IO.Output(Name+" says: I see that "+Math.abs(amount-stake)+" chip(s)!");
 			stake=amount;
-			Bank.removeFromBank(Name, amount);
+			Bank.removeFromBank(Name, amountSt);
 			return true;
 		}
 		else{
