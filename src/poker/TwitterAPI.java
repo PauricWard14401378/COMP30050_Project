@@ -1,5 +1,7 @@
 package poker;
 
+import java.util.Random;
+
 import twitter4j.FilterQuery;
 import twitter4j.StallWarning;
 import twitter4j.Status;
@@ -16,11 +18,11 @@ import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterAPI{
 	private TwitterFactory tf;
+	Random random=new Random();
+	private int TweetNumber=random.nextInt(100);
 	public Twitter twitter;
 	public TwitterStream twitterStream;
 	public String User;
-	public boolean FoundPlayer=false;
-	public int NoBots=0;
 	private String InputMessage="";
 	public static final int MAXCHARSIZE =140;
 	private StatusListener listener = new StatusListener() {
@@ -28,7 +30,6 @@ public class TwitterAPI{
         	if(!status.getText().contains("#DealMeInBurnNTurn")&&!status.getText().contains("#DealMeOutBurnNTurn")){
             	if(Main.Games.containsKey(status.getUser().getScreenName())){
     	        	User=status.getUser().getScreenName();
-    	        	FoundPlayer=true;
     	        	InputMessage=status.getText();
     	            notifyListener();
     	            Main.Games.get(User).notifyGame();
@@ -75,19 +76,22 @@ public class TwitterAPI{
         twitter = tf.getInstance();
         twitterStream= new TwitterStreamFactory(c).getInstance();
 	}
-	
+	//Tweeting from the bot
 	public void updateStatus(String string) throws TwitterException{
-		StatusUpdate statusUpdate = new StatusUpdate("@"+User+" "+string);
-		System.out.println("@"+User+" "+string);
+		TweetNumber=random.nextInt(100);
+		StatusUpdate statusUpdate = new StatusUpdate("@"+User+" "+string+" ("+TweetNumber+")");
+		System.out.println("@"+User+" "+string+" ("+TweetNumber+")");
 		twitter.updateStatus(statusUpdate);
 	}
 	
+	//Allowing the program to carry on once the first player is found
 	public synchronized void notifyListener(){
 		notify();
 	}
 	
+	//This defines our filter query which we add to the TwitterStream which has 
+	//Two listeners
 	public synchronized void startListener() {
-		System.out.println("Starting Listener");
 	    FilterQuery fq = new FilterQuery();
 	    String keywords[] = {"#DealMeInBurnNTurn","@BurnAndTurn173","#DealMeOutBurnNTurn"};
 	    fq.track(keywords);
@@ -100,6 +104,7 @@ public class TwitterAPI{
 		}
 	}
 	
+	//Getting input minus the twitter handle characters
 	public String getinput() {
 		return InputMessage.substring(16);
 	}

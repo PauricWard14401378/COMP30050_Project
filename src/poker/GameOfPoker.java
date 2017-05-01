@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import twitter4j.TwitterException;
 
 public class GameOfPoker extends Thread{
-	//For use of the program in the console and not on twitter! Set to true if you want to run through the console
-	private static final boolean console = true;
 	//Declaration of the variables and constants needed for GameOfPoker
 	public static IO IO;
 	private ArrayList<AutomatedPokerPlayer> bots=new ArrayList<AutomatedPokerPlayer>();
@@ -120,6 +118,7 @@ public class GameOfPoker extends Thread{
 			String cards="";
 			do{
 				IO.Output(discardPromptToString1());
+				IO.Output(discardPromptToString2());
 				cards=getInput();
 			}while(!(cards.contains("0")||cards.contains("1")||cards.contains("2")||cards.contains("3")||cards.contains("4")||cards.contains("5")));
 			
@@ -175,6 +174,8 @@ public class GameOfPoker extends Thread{
 		}
 	}
 	
+	
+
 	public void gameOver(String winner){
 		IO.Output("GAME OVER!!\nThe winner is "+winner+". \nCONGRATULATIONS!!");
 	}
@@ -188,7 +189,7 @@ public class GameOfPoker extends Thread{
 	//Allows for this thread to wait on input
 	@SuppressWarnings("unused")
 	public synchronized String getInput(){
-		if(console==false){
+		if(!Main.console){
 			InputString="";
 			IO.tweetRemainingOutput();
 			while(InputString.isEmpty()){
@@ -222,7 +223,10 @@ public class GameOfPoker extends Thread{
 	}
 	
 	private String discardPromptToString1(){
-		return "Which cards would you like to discard? Enter 1-5 to select cards to discard. Enter 0 if you don't want to discard.";
+		return "Which cards would you like to discard?\nEnter 1-5 to select cards to discard.";
+	}
+	private String discardPromptToString2() {
+		return  "Enter 0 if you don't want to discard.";
 	}
 	
 	private String handUpdateToString1(String hand){

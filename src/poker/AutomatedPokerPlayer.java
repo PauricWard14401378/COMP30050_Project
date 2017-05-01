@@ -112,6 +112,7 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		int rand1 = rand.nextInt(100);
 		int scalePercentage = Math.abs(amount-stake)*20;
 		int stackPercentage=0;
+		CarryOn=false;
 		//Handling division by zero in stackPercentage
 		if(!(((Bank.getPlayerStack(Name)+stake)*100)==0)){
 			stackPercentage=stake/(Bank.getPlayerStack(Name)+stake)*100;

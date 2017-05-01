@@ -5,11 +5,7 @@ import java.util.Collections;
 
 
 public class HumanPokerPlayer extends PokerPlayer{
-	
-	//For use of the program in the console and not on twitter
-	private static final boolean console = true;
-	
-	//Keeps track of the input recieved from IO
+	//Keeps track of the input received from IO
 	private String InputString;
 
 	//The constructor takes an extra input than its parent class.
@@ -29,7 +25,6 @@ public class HumanPokerPlayer extends PokerPlayer{
 		//Replace the cards that were discarded
 		Hand.replaceDiscarded();
 		//Resort the Hand
-		System.out.println(Hand.toString());
 		Hand.sort();	
 	}
 
@@ -87,7 +82,7 @@ public class HumanPokerPlayer extends PokerPlayer{
 	//Allows for this thread to wait on input
 	@SuppressWarnings("unused")
 	public synchronized String getInput(){
-		if(console==false){//For testing on the console without Twitter
+		if(!Main.console){//For testing on the console without Twitter
 			InputString="";
 			GameOfPoker.IO.tweetRemainingOutput();
 			while(InputString.isEmpty()){

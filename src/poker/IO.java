@@ -6,11 +6,14 @@ import java.util.Scanner;
 import twitter4j.StatusListener;
 import twitter4j.TwitterException;
 
+//The IO class allows us to either run the program through the conole or Twitter by defining input and output 
+//Operations
 public class IO {
 	private int i;
 	private String Output="";
 	Scanner input=new Scanner(System.in);
 	TwitterAPI Twitter=new TwitterAPI();
+	//The hashmap stores all of the different users' output
 	HashMap<String, String> UserOutput=new HashMap<String,String>();
 	
 	IO(int j) {
@@ -18,24 +21,27 @@ public class IO {
 	}
 	
 	public String input() {
+		//Console
 		if(i==0){
 			return input.nextLine();
 		}
+		//Twitter
 		else{
 			return Twitter.getinput();
-				
 		}
 	}
 	public void Output(String output){
+		//Console
 		if(i==0){
 			System.out.println(outputToString(output));
 		}
+		//Twitter
 		else{
+			//Trying to get the character output as close to 140 characters as possible
 			if((UserOutput.get(getUser()).length()+output.length()+Twitter.User.length())< TwitterAPI.MAXCHARSIZE-10){
 				String add=UserOutput.get(getUser());
 				add+="\n"+output;
 				UserOutput.put(getUser(), add);
-				
 			}
 			else{
 				try {
@@ -47,6 +53,7 @@ public class IO {
 			}
 		}
 	}
+	//Before we receive input we must Tweet remaining output 
 	public void tweetRemainingOutput(){
 		System.out.println(UserOutput.get(getUser()));
 		if(!UserOutput.get(getUser()).isEmpty()){
@@ -64,12 +71,6 @@ public class IO {
 	}
 	public void startStatusListener(){
 		Twitter.startListener();
-	}
-	public boolean foundPlayer(){
-		return Twitter.FoundPlayer;
-	}
-	public int noBots(){
-		return Twitter.NoBots;
 	}
 	public String getUser(){
 		return Twitter.getUser();

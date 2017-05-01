@@ -9,39 +9,39 @@ import twitter4j.StatusListener;
 import twitter4j.TwitterException;
 
 public class Main {
-	static int p=0;
+	public static final boolean console = false;
+	//This hash map will store all of the threads that are running at the same time
 	static HashMap<String, GameOfPoker> Games= new HashMap<String, GameOfPoker>();
+	//In the main we can either run the program through the console or on Twitter.
+	//To run the main through the console: Set "option" to 0, Set "console" to true
+	//To run the program through Twitter: Set "option" to 1, set "console" to false
 	public static void main(String[] args) throws TwitterException{
-		System.out.println("start");
-		int option=0;
+		int option=1;
 		IO IO;
-		IO = new IO(0);
+		IO = new IO(option);
 		DeckOfCards Deck=new DeckOfCards();
+		//Run program through console
 		if(option==0){
-			GameOfPoker game=new GameOfPoker(1,Deck,IO);
+			GameOfPoker game=new GameOfPoker(5,Deck,IO);
 			game.run();
 		}
+		//Run through Twitter with updates from console
 		else{
 			StatusListener hashTagListener=new StatusListener(){
 		        public void onStatus(Status status){
 		        	if(status.getText().startsWith("#DealMeInBurnNTurn")){
-		        		System.out.println(status.getUser().getScreenName());
 		        		IO.setUser(status.getUser().getScreenName());
-	        			System.out.println("Thread Number "+p);
-	        			p++;
 	        			String InputMessage=status.getText();
 	        			int NoBots=Integer.parseInt(InputMessage.substring(19));
 	        			GameOfPoker newGame= new GameOfPoker(NoBots, Deck, IO);
 	        			Thread t=new Thread (newGame);
 	        			t.start();
 	        			Games.put(IO.getUser(),newGame);
-	        			System.out.println("Made it this far");
 		        	}
 		        	if(status.getText().startsWith("#DealMeOutBurnNTurn")){
 		        		Games.get(status.getUser().getScreenName()).interrupt();
 			        	Games.remove(IO.getUser());
 		        	}
-		        	//Games.get(IO.getUser()).notifyGame();
 		        }
 				public void onTrackLimitationNotice(int numberOfLimitedStatuses) {
 		            System.out.println("Got track limitation notice:" + numberOfLimitedStatuses);
