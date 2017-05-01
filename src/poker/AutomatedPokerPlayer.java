@@ -3,20 +3,25 @@ package poker;
 import java.util.Random;
 
 public class AutomatedPokerPlayer extends PokerPlayer{
-	public int[] personality;
-	//Will play with type of hand, bet size depending on hand, 
-	
-	private static final int[] NERVOUS={30,40};
-	private static final int[] AGGRESSIVE={50,60};
+	//Declaration of variables and constants used to represent an automated poker player
+	private int[] personality;
+	//The base personality values where the first value is the probability of the player to call
+	//And the second value is the probability of the player to raise.
+	private static final int[] NERVOUS={40,30};
+	private static final int[] AGGRESSIVE={60,50};
 	private static final int[] BLUFFER={40,60};
-	private static final int[] TAME={40,50};
+	private static final int[] TAME={50,40};
 	Random rand=new Random();
 	
+	//The constructor takes an extra input than its parent class. It also calls the decideProbability
+	//Method which sets the base values for the player.
 	public AutomatedPokerPlayer(DeckOfCards Deck,String name, Bank bank) {
 		super(Deck, bank);
 		Name=name;
 		decidePersonality();
 	}
+	
+	//Sets the base personality values for the player.
 	private void decidePersonality() {
 		if(Name.equals("Tom")){
 			personality=NERVOUS;
@@ -31,6 +36,8 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 			personality=TAME;
 		}
 	}
+	
+	//This method updates the probability to call and raise based on what class of hand the player has
 	public void updatePercentages(){
 		if(Hand.getGamevalue()>HandOfCards.ONEPAIR&&Hand.getGamevalue()<HandOfCards.TWOPAIR){
 			personality[0]+=10;
@@ -67,11 +74,10 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		if(personality[1]>100){
 			personality[1]=100;
 		}
-
 	}
 	
+	//Handles the discarding of cards based on their discard probability
 	public void discard(){
-		
 		int rand1, cardsDiscarded=0;
 		//Cycles through the hand and decides whether to discard the card or not
 		for(int x=HandOfCards.HANDSIZE-1;x<0;x--){
@@ -98,50 +104,92 @@ public class AutomatedPokerPlayer extends PokerPlayer{
 		Hand.sort();
 		updatePercentages();
 	}
+	
+	//This method handles how the automated poker player calls bets based on their personality, class of hand and 
+	//The size of the amount compared to their stack
 	public boolean call(int amount){
-		int amountSt=Math.abs(amount-stake);
-		int rand1=rand.nextInt(100);
-		int scalePercentage=Math.abs(amount-stake)*20;
-		int stackPercentage=stake/(Bank.getPlayerStack(Name)+stake)*100;
+		int amountSt = Math.abs(amount-stake);
+		int rand1 = rand.nextInt(100);
+		int scalePercentage = Math.abs(amount-stake)*20;
+		int stackPercentage=0;
+		//Handling division by zero in stackPercentage
+		if(!(((Bank.getPlayerStack(Name)+stake)*100)==0)){
+			stackPercentage=stake/(Bank.getPlayerStack(Name)+stake)*100;
+		}
+		//Handles the boolean which is used in raise
 		if(stake==amount && amount!=0){
 			called=true;
 			return true;
 		}
-		if(personality[1]-scalePercentage-stackPercentage>=rand1 && amount==0){
-			int openBet=Math.abs(personality[1]-rand1)/20;
+		//If the player wants to open, can open and another player has not opened
+		if((personality[0]-scalePercentage-stackPercentage) >= rand1 && amount==0 && CanOpen==true){
+			int openBet =Math.abs(personality[1]-rand1)/20;
 			if(openBet==0){
 				return false;
 			}
-			GameOfPoker.IO.Output(Name+" says: I open with "+ openBet+" chip(s)");
-			Bank.removeFromBank(Name, openBet);
-			stake+=openBet;
-			opened=true;
+			if(Bank.getPlayerStack(Name)-openBet <= 0){
+				GameOfPoker.IO.Output(Name+" says: I open with "+ openBet+" chip(s)");
+				Bank.removeFromBank(Name, Bank.getPlayerStack(Name));
+				//Updates the stake that the player has in the hand
+				stake+=openBet;
+				opened=true;
+				AllIn=true;
+				return true;
+			}
+			else{
+				GameOfPoker.IO.Output(Name+" says: I open with "+ openBet+" chip(s)");
+				Bank.removeFromBank(Name, openBet);
+				//Updates the stake that the player has in the hand
+				stake+=openBet;
+				opened=true;
+				return true;
+			}
+		}
+		//If the player wants to see the bet
+		else if(personality[0]-scalePercentage-stackPercentage>=rand1 && amount!=0){
+			if(Bank.getPlayerStack(Name)-amountSt <= 0){
+				GameOfPoker.IO.Output(Name+" says: I see that "+Math.abs(amount-stake)+" chip(s)!");
+				stake=amount;
+				Bank.removeFromBank(Name, Bank.getPlayerStack(Name));
+				AllIn=true;
+				return true;
+			}
+			else{
+				GameOfPoker.IO.Output(Name+" says: I see that "+Math.abs(amount-stake)+" chip(s)!");
+				stake=amount;
+				Bank.removeFromBank(Name, amountSt);
+				return true;
+			}
+		}
+		//If the player wants to stay in the hand but cannot open
+		else if((personality[0]-scalePercentage-stackPercentage) >= rand1 && amount==0){
+			CarryOn=true;
 			return true;
 		}
-		else if(personality[1]-scalePercentage-stackPercentage>=rand1){
-			GameOfPoker.IO.Output(Name+" says: I see that "+Math.abs(amount-stake)+" chip(s)!");
-			stake=amount;
-			Bank.removeFromBank(Name, amountSt);
-			return true;
-		}
+		//Otherwise the player indicates they want to fold
 		else{
 			return false;
 		}
 
 	}
+	
+	//This method handles how the automated poker player raises in the game
 	public boolean raise(){
+		int rand1=rand.nextInt(100);
+		//If the player opened then carry on
 		if(opened==true){
 			opened=false;
 			return false;
 		}
+		//If the player called then return false
 		if(called==true){
 			return false;
 		}
-		int rand1=rand.nextInt(100);
-		if(personality[0]>=rand1){
+		//If the player wants to raise based on their personality and their class of hand
+		if(personality[1] >= rand1){
 			GameOfPoker.IO.Output(Name+" says: and I raise you 1 chip(s)!");
 			stake+=1;
-			this.Bank.removeFromBank(Name,1);
+			Bank.removeFromBank(Name,1);
 			return true;
 		}
 		return false;

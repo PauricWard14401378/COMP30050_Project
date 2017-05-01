@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Bank {
-	private static final int BANKTOTAL= 50;
+	private static final int BANKTOTAL= 10;
 	private ArrayList<PokerPlayer> Players;
 	private int Pot=0;
 	public HashMap<String,Integer> playerStacks=new HashMap<String,Integer>();

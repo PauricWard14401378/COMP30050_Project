@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import twitter4j.TwitterException;
 
 public class GameOfPoker extends Thread{
-	private static final boolean console = false;
-	//Need both a bots arraylist and a humanpokerplayer because you need to distinguish between both human and bot
+	//For use of the program in the console and not on twitter! Set to true if you want to run through the console
+	private static final boolean console = true;
+	//Declaration of the variables and constants needed for GameOfPoker
+	public static IO IO;
 	private ArrayList<AutomatedPokerPlayer> bots=new ArrayList<AutomatedPokerPlayer>();
 	private HumanPokerPlayer human;
-	public DeckOfCards Deck;
+	private DeckOfCards Deck;
 	private String[] BotsNames={"Tom","Dick","Harry","Sally"};
 	private ArrayList<PokerPlayer> Players=new ArrayList<PokerPlayer>();
 	private Boolean GameOver=false;
-	public static IO IO;
 	private Bank Bank=new Bank();
 	private int NoBots;
 	private String InputString = "";
@@ -21,22 +22,23 @@ public class GameOfPoker extends Thread{
 		IO=io;
 		Deck=deck;
 		NoBots=numbots;
-		
 	}
 	
+	//The run method is an implementation of the Thread extension which allows the thread to start
 	@Override
 	public void run() {
 		welcome();
 		initializebots(NoBots);
 		initializePlayers(human,bots);
 		Bank.initializePlayerStacks(Players);
-
 		try {
 			playGame();
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}
+
 	}
+	//Initialising the players playing the game of poker
 	private void initializePlayers(HumanPokerPlayer human2, ArrayList<AutomatedPokerPlayer> bots2) {
 		Players.clear();
 		Players.add(human2);
@@ -45,22 +47,19 @@ public class GameOfPoker extends Thread{
 		}
 	}
 
+	//Welcomes the user and asks for their name 
 	private void welcome(){
 		IO.Output("Welcome to the Automated Poker Machine!\nWhat is your name?");
 		String humanName="";
 		humanName=getInput();
-		//String humanName=IO.input();
 		human= new HumanPokerPlayer(Deck,humanName,Bank);
 		IO.Output(letsPlayToString());
 	}
-	
-	public String letsPlayToString(){
-		return "Let's play POKER!";
-	}
 
+	
 	private void initializebots(int numbots){
 		if(numbots>4||numbots<1){
-			throw new ArithmeticException("There has to be at least one bot and at most four. Please enter another number of bots.");
+			numbots=4;
 		}
 		for(int i=0;i<numbots;i++){
 			bots.add(new AutomatedPokerPlayer(Deck, BotsNames[i],Bank));
@@ -68,13 +67,32 @@ public class GameOfPoker extends Thread{
 		
 	}
 	
+	//This method handles multiple hands of poker until one player wins or the User leaves the game
 	private void playGame() throws TwitterException{
-		while(!GameOver){//Need to define when the game is over...i.e when players lose all their chips or human decides to quit
+		while(!GameOver){
 			//Checks if players are bankrupt
 			for(int i=0;i<Players.size();i++){
 				if(Players.get(i).isBankrupt()){
-					Players.remove(i);
+					PokerPlayer temp=Players.remove(i);
+					for(int x=0; x<bots.size();x++){
+						if(temp.Name.equals(bots.get(x).Name)){
+							bots.remove(x);
+						}
+					}
 				}
+			}
+			//If the human player is put out then end the game
+			if(!Players.get(0).equals(human)){
+				gameOver();
+				GameOver=true;
+				continue;
+			}
+			//If there is only one player left then they are declared the winner
+			if(Players.size()==1){
+				String winner=Players.get(0).Name;
+				gameOver(winner);
+				GameOver=true;
+				continue;
 			}
 			//Resets the Deck
 			Deck.reset();
@@ -82,17 +100,20 @@ public class GameOfPoker extends Thread{
 			//Sets up a new round of poker
 			HandOfPoker round = new HandOfPoker(human, bots, Deck, Bank);
 			IO.Output(newDealToString1());
+			
 			//Shows how many chips each player has
 			for(int x=0;x<Players.size();x++){
 				String name = Players.get(x).Name;
 				int bank = Bank.getPlayerStack(name);
 				IO.Output(stackUpdateToString1(name,bank));
 			}
+			
 			//If no one can open then re-deal
 			if(!round.opening()){	
 				IO.Output(badDealToString1());
 				continue;
 			}
+			//Showing the user their hand
 			String handSt = human.showHand();
 			IO.Output(handToString1(handSt));
 			//Handles Discarding
@@ -101,6 +122,7 @@ public class GameOfPoker extends Thread{
 				IO.Output(discardPromptToString1());
 				cards=getInput();
 			}while(!(cards.contains("0")||cards.contains("1")||cards.contains("2")||cards.contains("3")||cards.contains("4")||cards.contains("5")));
+			
 			if(!cards.contains("0")){
 				cards=cards.replaceAll("[^\\d]", "");
 				Integer[] discardcards = new Integer[cards.length()];
@@ -109,23 +131,27 @@ public class GameOfPoker extends Thread{
 				}
 				round.discardCards(discardcards);
 			}
-			
+			//Showing the user their hand after discard
 			String hand = human.showHand();
 			IO.Output(handUpdateToString1(hand));
+			//Handles folding
 			String fold;
 			do{
 				IO.Output(foldPromptToString1());
 				fold=getInput();
 			}while(!(fold.equalsIgnoreCase("y")||fold.equalsIgnoreCase("n")||fold.equalsIgnoreCase("yes")||fold.equalsIgnoreCase("no")));
 			round.folding(fold);
+			//If the user can open and wants to open then ask for their open bet
 			if(human.CanOpen&&(!fold.equalsIgnoreCase("yes")||!fold.equalsIgnoreCase("y"))){
 				IO.Output(openBettingPromptToString1());
+				//Asks if the player wants to open
 				String open;
 				do{
 					open=getInput();
 				}while(!(open.equalsIgnoreCase("y")||open.equalsIgnoreCase("n")||open.equalsIgnoreCase("yes")||open.equalsIgnoreCase("no")));
 				if(open.equalsIgnoreCase("yes")||open.equalsIgnoreCase("y")){
 					int humanStack=Bank.getPlayerStack(human.Name);
+					//Asks the user how much they want to open with
 					String betting;
 					int openBet;
 					do{
@@ -144,113 +170,77 @@ public class GameOfPoker extends Thread{
 			else{
 				round.betting(0);
 			}
+			//Compares the hands after betting and declares the winner of the hand
 			round.compareHands();
 		}
 	}
+	
+	public void gameOver(String winner){
+		IO.Output("GAME OVER!!\nThe winner is "+winner+". \nCONGRATULATIONS!!");
+	}
+	private void gameOver(){
+		IO.Output("Sorry You have lost!\nPlease play the Automated Poker Game another time");
+	}
+	//Allows for this thread to continue after an input is received
 	public synchronized void notifyGame(){
-		System.out.println("NOTIFIED");
 		notify();
 	}
+	//Allows for this thread to wait on input
 	@SuppressWarnings("unused")
 	public synchronized String getInput(){
-		if(console==true){
+		if(console==false){
 			InputString="";
 			IO.tweetRemainingOutput();
 			while(InputString.isEmpty()){
 				try {
-					System.out.println("Before");
 					wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				InputString=IO.input();
 			}
-			System.out.println("After");
-			
 			System.out.println(InputString);
 			return InputString;
 		}
 		else{
 			return IO.input();
 		}
-		}
-		
-		
-	public String newDealToString1(){
+	}	
+	private String newDealToString1(){
 		return "New Deal: ";
 	}
 
-	public String stackUpdateToString1(String name, int x){
+	private String stackUpdateToString1(String name, int x){
 		return name + " has " + x + " chip(s) in the bank";
 	}
 	
-	public String badDealToString1(){
+	private String badDealToString1(){
 		return "No one can open the betting! Re-deal";
 	}
-	
-	
-	public String newDealToString(){
-		return "New Deal: ";
-	}
-
-	public String stackUpdateToString(String name, int x){
-		return name + " has " + x + " chip(s) in the bank";
-	}
-	
-	public String badDealToString(){
-		return "No one can open the betting! Re-deal";
-	}
-	
-	public String handToString1(String hand){
+	private String handToString1(String hand){
 		return "You have been dealt the following hand: \n"+ hand;
 	}
 	
-	public String discardPromptToString1(){
+	private String discardPromptToString1(){
 		return "Which cards would you like to discard? Enter 1-5 to select cards to discard. Enter 0 if you don't want to discard.";
 	}
 	
-	public String handUpdateToString1(String hand){
+	private String handUpdateToString1(String hand){
 		return "Your hand now looks like: \n"+ hand;
 	}
 	
-	public String foldPromptToString1(){
+	private String foldPromptToString1(){
 		return "Would you like to fold?";
 	}
 	
-	public String openBettingPromptToString1(){
+	private String openBettingPromptToString1(){
 		return "Would you like to open the betting?";
 	}
 	
-	public String betAmountPromptToString1(int humanStack){
+	private String betAmountPromptToString1(int humanStack){
 		return "How much would you like to bet? Enter a value greater than 0 and less than "+humanStack;
 	}
-	public String handToString(String hand){
-		return "You have been dealt the following hand: \n"+ hand;
+	private String letsPlayToString(){
+		return "Let's play POKER!";
 	}
-	
-	public String discardPromptToString(){
-		return "Which cards would you like to discard? Enter 0 if you don't want to discard.";
-	}
-	
-	public String handUpdateToString(String hand){
-		return "Your hand now looks like: \n"+ hand;
-	}
-	
-	public String foldPromptToString(){
-		return "Would you like to fold?";
-	}
-	
-	public String openBettingPromptToString(){
-		return "Would you like to open the betting?";
-	}
-	
-	public String betAmountPromptToString(){
-		return "How much would you like to bet?";
-	}
-	
-
-
-	
-	
-	
 }

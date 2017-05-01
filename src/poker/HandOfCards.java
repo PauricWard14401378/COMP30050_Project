@@ -10,7 +10,7 @@ import java.util.Comparator;
 //Each hand has to be classified to show its worth in the game of draw poker.
 
 public class HandOfCards {
-	
+	//Declaration of Constants
 	public static final int HANDSIZE=5;
 	public static final int ROYALFLUSH=9000000;
 	public static final int STRAIGHTFLUSH=8000000;
@@ -22,20 +22,20 @@ public class HandOfCards {
 	public static final int TWOPAIR=2000000;
 	public static final int ONEPAIR=1000000;
 	
-	public final int DEFINITEDISCARD=100;
-	public final int HIGHCHANCEKEEP = 70;
-	public final int EVENCHANCE = 50;
-	public final int LOWCHANCEKEEP = 20;
-	public final int HIGHCHANCEDISCARD = 10;
-	public final int DEFINITEKEEP=0;
+	private final int DEFINITEDISCARD=100;
+	private final int HIGHCHANCEKEEP = 70;
+	private final int EVENCHANCE = 50;
+	private final int LOWCHANCEKEEP = 20;
+	private final int HIGHCHANCEDISCARD = 10;
+	private final int DEFINITEKEEP=0;
 	
-	public ArrayList<PlayingCard> Hand=new ArrayList<PlayingCard>();
+	private ArrayList<PlayingCard> Hand=new ArrayList<PlayingCard>();
 	private DeckOfCards Deck;
 	private int[] card=new int[HANDSIZE];
 	private int[] card2=new int[HANDSIZE];
 	private char[] card3=new char[HANDSIZE];
 	
-	//ints for keeping track of which cards are which in each hand
+	//Ints for keeping track of which cards are which in each hand
 	private int leadPairCard = 5;
 	private int bustedFlushCard = 5;
 	private int bustedStraightCard = 5;
@@ -82,8 +82,8 @@ public class HandOfCards {
 	}
 	
 	
-	/*In each of the boolean methods I filled an array with the attribute that I wanted to compare from each card in the hand.
-	 *I then compared these attributes and returned true or false depending on these comparisons. In this way we can classify 
+	/*In each of the boolean methods we filled an array with the attribute that we wanted to compare from each card in the hand.
+	 *we then compared these attributes and returned true or false depending on these comparisons. In this way we can classify 
 	 *the hand depending on the game value.*/
 	
 	public boolean isRoyalFlush(){
@@ -471,7 +471,8 @@ public class HandOfCards {
 		}
 		return discardProbability;
 	}
-	public boolean isBustedFlush(){
+	
+	private boolean isBustedFlush(){
 		if(card3[0]==card3[1]&&card3[0]==card3[2]&&card3[0]==card3[3]&&card3[0]!=card3[4]){
 			bustedFlushCard = 4;
 			return true;
@@ -497,7 +498,7 @@ public class HandOfCards {
 		}
 	}
 	
-	public boolean isBustedStraight(){
+	private boolean isBustedStraight(){
 		//ACE LOW STRAUGHT
 		if(card[0]==14&&card[1]!=6){
 			//ACE LOW CONTAINING A PAIR
@@ -585,6 +586,7 @@ public class HandOfCards {
 		return;
 	}
 	
+	//Prints the cards in the Hand 
 	public String toString(){
 		return Hand.toString();
 		

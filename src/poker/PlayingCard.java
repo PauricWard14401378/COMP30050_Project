@@ -5,8 +5,7 @@ package poker;
 
 //The PlayingCard class is a programming representation of a playing card object 
 //That is used for Draws Poker.
-//It consists of the type, suit, face value and game value. There is also a main
-//Method which tests the PlayingCard class.
+//It consists of the type, suit, face value and game value.
 public class PlayingCard {
 	//Declaration of the constants that define the suits of playing card.
 	static public final char HEARTS='H';
